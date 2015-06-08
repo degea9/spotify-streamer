@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
-    android:id="@+id/list_item_artist_text_view">
-</TextView>
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/list_item_artist_image"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/list_item_artist_image"
+        android:layout_toEndOf="@id/list_item_artist_image"
+        android:gravity="center_vertical"
+        android:id="@+id/list_item_artist_name"/>
+
+</RelativeLayout>

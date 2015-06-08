@@ -3,21 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.github.mjhassanpur.spotifystreamer.ArtistSearchFragment">
+    tools:context="com.github.mjhassanpur.spotifystreamer.fragments.ArtistSearchFragment">
 
     <EditText
-        android:id="@+id/artist_search_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
         android:singleLine="true"
-        android:imeOptions="actionDone"/>
+        android:imeOptions="actionDone"
+        android:id="@+id/artist_search_box"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/artist_recycler_view"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/artist_search_box"/>
+        android:layout_below="@id/artist_search_box"
+        android:id="@+id/artist_recycler_view"/>
 
 </RelativeLayout>
