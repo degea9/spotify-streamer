@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import kaaes.spotify.webapi.android.models.Artist;
 
 
+/**
+ * A custom RecyclerView.Adapter for holding artists
+ *
+ * @see <a href="https://developer.android.com/training/material/lists-cards.html">Creating Lists and Cards</a>
+ */
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
 
     private Context mContext;
