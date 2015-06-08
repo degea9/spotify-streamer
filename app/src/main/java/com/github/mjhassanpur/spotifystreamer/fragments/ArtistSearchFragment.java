@@ -19,7 +19,10 @@ import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +36,9 @@ public class ArtistSearchFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ArtistAdapter mAdapter;
     private List<Artist> mArtistList;
+    private EditText mSearchBox;
     private SpotifyService mSpotifyService;
+    private final String KEY_ARTISTS = "artists";
 
     public ArtistSearchFragment() {
         // Get an instance of the SpotifyApi
@@ -44,7 +49,42 @@ public class ArtistSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_artist_search, container, false);
-        EditText mSearchBox = (EditText) rootView.findViewById(R.id.artist_search_box);
+        mSearchBox = (EditText) rootView.findViewById(R.id.artist_search_box);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.artist_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (savedInstanceState == null) {
+            mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
+        } else {
+            // If instance is being recreated from a previous state
+            String json = savedInstanceState.getString(KEY_ARTISTS);
+            if (json != null) {
+                Type listType = new TypeToken<List<Artist>>() {}.getType();
+                mArtistList = new Gson().fromJson(json, listType);
+                if (mArtistList != null && !mArtistList.isEmpty()) {
+                    mAdapter = new ArtistAdapter(new ArrayList<>(mArtistList));
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            }
+        }
+        return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Type listType = new TypeToken<List<Artist>>() {}.getType();
+        outState.putString(KEY_ARTISTS, new Gson().toJson(mArtistList, listType));
+        super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * Add listeners to the search box
+     *
+     * This method is intended to be invoked by the parent activity's onPostCreate method
+     *
+     * @see <a href="http://stackoverflow.com/questions/6028218/android-retain-callback-state-after-configuration-change/6029070#6029070">Android retain callback state after configuration change</a>
+     * @see <a href="http://stackoverflow.com/questions/24221528/onpostcreate-in-fragment">OnPostCreate in Fragment</a>
+     */
+    public void addSearchBoxListeners() {
         mSearchBox.addTextChangedListener(new SearchBoxTextWatcher());
         mSearchBox.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -57,10 +97,6 @@ public class ArtistSearchFragment extends Fragment {
                 return false;
             }
         });
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.artist_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
-        return rootView;
     }
 
     /**
