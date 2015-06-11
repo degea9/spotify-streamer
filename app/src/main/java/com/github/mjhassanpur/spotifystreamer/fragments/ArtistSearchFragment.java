@@ -34,8 +34,10 @@ import kaaes.spotify.webapi.android.models.Artist;
 public class ArtistSearchFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
-    private ArtistAdapter mAdapter;
+    private ArtistAdapter mArtistAdapter;
     private List<Artist> mArtistList;
+    private Type mArtistListType;
+    private Gson mGson;
     private EditText mSearchBox;
     private SpotifyService mSpotifyService;
     private final String KEY_ARTISTS = "artists";
@@ -43,6 +45,10 @@ public class ArtistSearchFragment extends Fragment {
     public ArtistSearchFragment() {
         // Get an instance of the SpotifyApi
         mSpotifyService = new SpotifyApi().getService();
+        // Get an instance of Gson for serialization / deserialization
+        mGson = new Gson();
+        // The artist list type
+        mArtistListType = new TypeToken<List<Artist>>() {}.getType();
     }
 
     @Override
@@ -58,12 +64,8 @@ public class ArtistSearchFragment extends Fragment {
             // If instance is being recreated from a previous state
             String json = savedInstanceState.getString(KEY_ARTISTS);
             if (json != null) {
-                Type listType = new TypeToken<List<Artist>>() {}.getType();
-                mArtistList = new Gson().fromJson(json, listType);
-                if (mArtistList != null && !mArtistList.isEmpty()) {
-                    mAdapter = new ArtistAdapter(new ArrayList<>(mArtistList));
-                    mRecyclerView.setAdapter(mAdapter);
-                }
+                mArtistList = mGson.fromJson(json, mArtistListType);
+                updateArtistAdapter(mArtistList);
             }
         }
         return rootView;
@@ -71,9 +73,32 @@ public class ArtistSearchFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Type listType = new TypeToken<List<Artist>>() {}.getType();
-        outState.putString(KEY_ARTISTS, new Gson().toJson(mArtistList, listType));
+        outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, mArtistListType));
         super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * Search for artists that match the keyword string
+     *
+     * @param s The keyword string
+     */
+    private void searchArtists(String s) {
+        new SearchArtistsTask().execute(s);
+    }
+
+    /**
+     * Update the artist adapter and set it on the recycler view
+     *
+     * @param artists the list of artists to be added to the adapter
+     * @return true if the adapter was set on the recycler view
+     */
+    private boolean updateArtistAdapter(List<Artist> artists) {
+        if (artists != null && !artists.isEmpty()) {
+            mArtistAdapter = new ArtistAdapter(new ArrayList<>(artists));
+            mRecyclerView.setAdapter(mArtistAdapter);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -97,15 +122,6 @@ public class ArtistSearchFragment extends Fragment {
                 return false;
             }
         });
-    }
-
-    /**
-     * Search for artists that match the keyword string
-     *
-     * @param s The keyword string
-     */
-    private void searchArtists(String s) {
-        new SearchArtistsTask().execute(s);
     }
 
     /**
@@ -160,10 +176,7 @@ public class ArtistSearchFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if (mArtistList != null && !mArtistList.isEmpty()) {
-                mAdapter = new ArtistAdapter(new ArrayList<>(mArtistList));
-                mRecyclerView.setAdapter(mAdapter);
-            } else {
+            if (!updateArtistAdapter(mArtistList)) {
                 // If no artists were found
                 mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
                 Toast.makeText(getActivity(),
