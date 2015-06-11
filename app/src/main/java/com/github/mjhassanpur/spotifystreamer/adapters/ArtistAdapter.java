@@ -53,10 +53,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         Artist artist = mArtists.get(position);
         holder.mTextView.setText(artist.name);
         if (!artist.images.isEmpty()) {
-            Picasso.with(mContext).load(artist.images.get(0).url).into(holder.mImageView);
-        } else {
-            // If an artist image was not found
-            holder.mImageView.setImageResource(R.drawable.ic_launcher);
+            Picasso.with(mContext)
+                    .load(artist.images.get(0).url)
+                    .error(R.drawable.ic_launcher)
+                    .into(holder.mImageView);
         }
     }
 
