@@ -1,5 +1,6 @@
 package com.github.mjhassanpur.spotifystreamer.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
+import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -58,6 +61,8 @@ public class ArtistSearchFragment extends Fragment {
         mSearchBox = (EditText) rootView.findViewById(R.id.artist_search_box);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.artist_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new OnItemClickListener()));
         if (savedInstanceState == null) {
             mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
         } else {
@@ -142,8 +147,7 @@ public class ArtistSearchFragment extends Fragment {
         public void beforeTextChanged( CharSequence s, int start, int count, int after) { }
 
         @Override
-        public void afterTextChanged( final Editable s)
-        {
+        public void afterTextChanged( final Editable s) {
             // Cancel previous search
             if (delayedAction != null) {
                 handler.removeCallbacks(delayedAction);
@@ -160,6 +164,16 @@ public class ArtistSearchFragment extends Fragment {
             // Delay the search
             handler.postDelayed(delayedAction, DELAY_IN_MILLISECONDS);
         }
+
+    }
+
+    private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
+
+        @Override
+        public void onItemClick(View childView, int position) {
+            startActivity(new Intent(getActivity(), TopTracksActivity.class));
+        }
+
     }
 
     public class SearchArtistsTask extends AsyncTask<String, Void, Void> {
