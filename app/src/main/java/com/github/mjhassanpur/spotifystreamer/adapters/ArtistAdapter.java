@@ -8,12 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Image;
 
 
 /**
@@ -52,12 +54,15 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         Artist artist = mArtists.get(position);
         holder.mTextView.setText(artist.name);
-        if (!artist.images.isEmpty()) {
-            Picasso.with(mContext)
-                    .load(artist.images.get(0).url)
-                    .error(R.drawable.ic_launcher)
-                    .into(holder.mImageView);
+        String url = null;
+        List<Image> images = artist.images;
+        if (images != null && !images.isEmpty()) {
+            url = images.get(0).url;
         }
+        Glide.with(mContext)
+                .load(url)
+                .error(R.drawable.ic_launcher)
+                .into(holder.mImageView);
     }
 
     @Override

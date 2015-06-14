@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
@@ -54,12 +56,15 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         Track track = mTracks.get(position);
         holder.mTrackTextView.setText(track.name);
         holder.mAlbumTextView.setText(track.album.name);
-        if (!track.album.images.isEmpty()) {
-            Picasso.with(mContext)
-                    .load(track.album.images.get(0).url)
-                    .error(R.drawable.ic_launcher)
-                    .into(holder.mAlbumImageView);
+        String url = null;
+        List<Image> images = track.album.images;
+        if (images != null && !images.isEmpty()) {
+            url = images.get(0).url;
         }
+        Glide.with(mContext)
+                .load(url)
+                .error(R.drawable.ic_launcher)
+                .into(holder.mAlbumImageView);
     }
 
     @Override
