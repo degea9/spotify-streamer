@@ -44,6 +44,7 @@ public class ArtistSearchFragment extends Fragment {
     private Gson mGson;
     private EditText mSearchBox;
     private SpotifyService mSpotifyService;
+    private final String KEY_ARTIST = "artist";
     private final String KEY_ARTISTS = "artists";
 
     public ArtistSearchFragment() {
@@ -173,7 +174,11 @@ public class ArtistSearchFragment extends Fragment {
 
         @Override
         public void onItemClick(View childView, int position) {
-            startActivity(new Intent(getActivity(), TopTracksActivity.class));
+            Intent intent = new Intent(getActivity(), TopTracksActivity.class);
+            Artist artist = mArtistList.get(position);
+            Type artistType = new TypeToken<Artist>() {}.getType();
+            intent.putExtra(KEY_ARTIST, mGson.toJson(artist, artistType));
+            startActivity(intent);
         }
 
     }

@@ -1,0 +1,69 @@
+package com.github.mjhassanpur.spotifystreamer.adapters;
+
+import android.content.Context;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.github.mjhassanpur.spotifystreamer.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+
+import kaaes.spotify.webapi.android.models.Track;
+
+/**
+ * A custom RecyclerView.Adapter for holding tracks
+ *
+ * @see <a href="https://developer.android.com/training/material/lists-cards.html">Creating Lists and Cards</a>
+ */
+public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
+
+    private Context mContext;
+    private ArrayList<Track> mTracks;
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView mAlbumImageView;
+        public TextView mTrackTextView;
+        public TextView mAlbumTextView;
+        public ViewHolder(View v) {
+            super(v);
+            mAlbumImageView = (ImageView) v.findViewById(R.id.list_item_album_image);
+            mTrackTextView = (TextView) v.findViewById(R.id.list_item_track_name);
+            mAlbumTextView = (TextView) v.findViewById(R.id.list_item_album_name);
+        }
+    }
+
+    public TrackAdapter(ArrayList<Track> trackList) {
+        mTracks = trackList;
+    }
+
+    @Override
+    public TrackAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        mContext = parent.getContext();
+        View v = LayoutInflater.from(mContext)
+                .inflate(R.layout.list_item_track, parent, false);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        Track track = mTracks.get(position);
+        holder.mTrackTextView.setText(track.name);
+        holder.mAlbumTextView.setText(track.album.name);
+        if (!track.album.images.isEmpty()) {
+            Picasso.with(mContext)
+                    .load(track.album.images.get(0).url)
+                    .error(R.drawable.ic_launcher)
+                    .into(holder.mAlbumImageView);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mTracks.size();
+    }
+}
