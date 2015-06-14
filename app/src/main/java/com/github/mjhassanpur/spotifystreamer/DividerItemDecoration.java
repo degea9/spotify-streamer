@@ -10,6 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * Used for adding a divider between RecyclerView items.
+ *
+ * @see <a href="https://gist.github.com/lapastillaroja/858caf1a82791b6c1a36">DividerItemDecoration</a>
+ */
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     private Drawable mDivider;
