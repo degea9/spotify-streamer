@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
 import com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
@@ -61,6 +62,7 @@ public class ArtistSearchFragment extends Fragment {
         mSearchBox = (EditText) rootView.findViewById(R.id.artist_search_box);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.artist_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
                 new OnItemClickListener()));
         if (savedInstanceState == null) {
