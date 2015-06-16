@@ -63,7 +63,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         }
         Glide.with(mContext)
                 .load(url)
-                .error(R.drawable.ic_launcher)
+                .error(R.drawable.default_album_image)
                 .into(holder.mAlbumImageView);
     }
 
