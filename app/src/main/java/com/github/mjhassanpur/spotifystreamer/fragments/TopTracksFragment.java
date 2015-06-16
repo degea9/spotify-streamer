@@ -94,17 +94,16 @@ public class TopTracksFragment extends Fragment {
 
     /**
      * Fetch the top tracks for the artist
-     *
      */
     private void fetchTopTracks() {
         new FetchTopTracksTask().execute();
     }
 
     /**
-     * Update the track adapter and set it on the recycler view
+     * Update the track adapter and set it on the RecyclerView
      *
-     * @param tracks the list of tracks to be added to the adapter
-     * @return true if the adapter was set on the recycler view
+     * @param tracks The list of tracks to be added to the adapter
+     * @return true if the adapter was set on the RecyclerView
      */
     private boolean updateTrackAdapter(List<Track> tracks) {
         if (tracks != null && !tracks.isEmpty()) {
