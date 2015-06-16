@@ -61,7 +61,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         }
         Glide.with(mContext)
                 .load(url)
-                .error(R.drawable.ic_launcher)
+                .error(R.drawable.default_profile_image)
                 .into(holder.mImageView);
     }
 
