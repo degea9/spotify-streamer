@@ -5,10 +5,9 @@
     android:layout_height="wrap_content"
     android:padding="10dp">
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="centerCrop"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:id="@+id/list_item_artist_image"/>
 
     <TextView
