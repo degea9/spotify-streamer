@@ -88,10 +88,12 @@ public class ArtistSearchActivity extends AppCompatActivity {
     }
 
     private void handleIntent(Intent intent) {
-        if (mSearchFragment != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            mSearchView.setQuery(query, false);
-            mSearchFragment.searchArtists(query);
+            if (!TextUtils.equals(mQuery, query)) {
+                mSearchView.setQuery(query, false);
+                mSearchView.clearFocus();
+            }
         }
     }
 
