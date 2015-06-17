@@ -44,13 +44,9 @@ public class TopTracksFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        // Get an instance of the SpotifyApi
         mSpotifyService = new SpotifyApi().getService();
-        // Get an instance of Gson for serialization / deserialization
         mGson = new Gson();
-        // The artist type
         mArtistType = new TypeToken<Artist>() {}.getType();
-        // The track list type
         mTrackListType = new TypeToken<List<Track>>() {}.getType();
         String json = getActivity().getIntent().getStringExtra(KEY_ARTIST);
         if (json != null) {
@@ -60,54 +56,39 @@ public class TopTracksFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.track_recycler_view);
-        setUpRecyclerView();
+        setupRecyclerView();
         if (savedInstanceState == null) {
             fetchTopTracks();
         } else {
-            // If instance is being recreated from a previous state
             String json = savedInstanceState.getString(KEY_TRACKS);
             if (json != null) {
                 mTrackList = mGson.fromJson(json, mTrackListType);
                 updateTrackAdapter(mTrackList);
             }
         }
-
         return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, mTrackListType));
         super.onSaveInstanceState(outState);
+        outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, mTrackListType));
     }
 
-    /**
-     * Sets up the RecyclerView for displaying tracks
-     */
-    private void setUpRecyclerView() {
+    private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
         mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
                 new OnItemClickListener()));
     }
 
-    /**
-     * Fetch the top tracks for the artist
-     */
     private void fetchTopTracks() {
         new FetchTopTracksTask().execute();
     }
 
-    /**
-     * Update the track adapter and set it on the RecyclerView
-     *
-     * @param tracks The list of tracks to be added to the adapter
-     * @return true if the adapter was set on the RecyclerView
-     */
     private boolean updateTrackAdapter(List<Track> tracks) {
         if (tracks != null && !tracks.isEmpty()) {
             mTrackAdapter = new TrackAdapter(new ArrayList<>(tracks));
@@ -117,9 +98,6 @@ public class TopTracksFragment extends Fragment {
         return false;
     }
 
-    /**
-     * A custom click listener for RecyclerView items
-     */
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
         @Override
@@ -129,9 +107,6 @@ public class TopTracksFragment extends Fragment {
         }
     }
 
-    /**
-     * Background task for fetching the artist's top tracks
-     */
     public class FetchTopTracksTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -145,7 +120,6 @@ public class TopTracksFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             if (!updateTrackAdapter(mTrackList)) {
-                // If no tracks were found
                 mRecyclerView.setAdapter(new TrackAdapter(new ArrayList<Track>()));
                 Toast.makeText(getActivity(),
                         "Sorry, no tracks found.",

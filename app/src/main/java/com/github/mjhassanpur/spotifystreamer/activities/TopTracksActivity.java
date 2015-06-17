@@ -1,6 +1,7 @@
 package com.github.mjhassanpur.spotifystreamer.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -19,10 +20,13 @@ public class TopTracksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, new TopTracksFragment())
-                    .commit();
+
+        FragmentManager fm = getSupportFragmentManager();
+        TopTracksFragment tracksFragment = (TopTracksFragment) fm.findFragmentById(R.id.fragment_container);
+
+        if (tracksFragment == null) {
+            tracksFragment = new TopTracksFragment();
+            fm.beginTransaction().add(R.id.fragment_container, tracksFragment).commit();
         }
     }
 
