@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -74,8 +73,8 @@ public class ArtistSearchActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (MenuItemCompat.isActionViewExpanded(mSearchItem)) {
-            MenuItemCompat.collapseActionView(mSearchItem);
+        if (mSearchItem.isActionViewExpanded()) {
+            mSearchItem.collapseActionView();
         } else {
             super.onBackPressed();
         }
@@ -102,14 +101,14 @@ public class ArtistSearchActivity extends AppCompatActivity {
      */
     private void setupSearchView() {
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(mSearchItem);
+        mSearchView = (SearchView) mSearchItem.getActionView();
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         mSearchView.setIconifiedByDefault(false);
         mSearchView.setOnQueryTextListener(new SearchViewTextListener());
         if (mQuery != null) {
             // Retain search query on screen rotation
             String savedSearch = mQuery;
-            MenuItemCompat.expandActionView(mSearchItem);
+            mSearchItem.expandActionView();
             mQuery = savedSearch;
             mSearchView.setQuery(mQuery, false);
             if (mQuery.isEmpty()) {
