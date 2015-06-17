@@ -44,8 +44,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     @Override
     public ArtistAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
-        View v = LayoutInflater.from(mContext)
-                .inflate(R.layout.list_item_artist, parent, false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.list_item_artist, parent, false);
         return new ViewHolder(v);
     }
 
@@ -58,10 +57,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         if (images != null && !images.isEmpty()) {
             url = images.get(0).url;
         }
-        Glide.with(mContext)
-                .load(url)
-                .error(R.drawable.default_profile_image)
-                .into(holder.mImageView);
+        Glide.with(mContext).load(url).error(R.drawable.default_profile_image).into(holder.mImageView);
     }
 
     @Override

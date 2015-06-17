@@ -81,8 +81,7 @@ public class TopTracksFragment extends Fragment {
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                new OnItemClickListener()));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new OnItemClickListener()));
     }
 
     private void fetchTopTracks() {
@@ -121,9 +120,7 @@ public class TopTracksFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             if (!updateTrackAdapter(mTrackList)) {
                 mRecyclerView.setAdapter(new TrackAdapter(new ArrayList<Track>()));
-                Toast.makeText(getActivity(),
-                        "Sorry, no tracks found.",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Sorry, no tracks found.", Toast.LENGTH_SHORT).show();
             }
         }
     }

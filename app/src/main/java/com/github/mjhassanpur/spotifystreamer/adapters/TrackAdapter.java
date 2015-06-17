@@ -46,8 +46,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
     @Override
     public TrackAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
-        View v = LayoutInflater.from(mContext)
-                .inflate(R.layout.list_item_track, parent, false);
+        View v = LayoutInflater.from(mContext).inflate(R.layout.list_item_track, parent, false);
         return new ViewHolder(v);
     }
 
@@ -61,10 +60,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         if (images != null && !images.isEmpty()) {
             url = images.get(0).url;
         }
-        Glide.with(mContext)
-                .load(url)
-                .error(R.drawable.default_album_image)
-                .into(holder.mAlbumImageView);
+        Glide.with(mContext).load(url).error(R.drawable.default_album_image).into(holder.mAlbumImageView);
     }
 
     @Override

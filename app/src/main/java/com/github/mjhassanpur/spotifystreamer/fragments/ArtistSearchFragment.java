@@ -76,8 +76,7 @@ public class ArtistSearchFragment extends Fragment {
     private void setupRecyclerView() {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                new OnItemClickListener()));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new OnItemClickListener()));
     }
 
     public void searchArtists(String query) {
@@ -132,9 +131,7 @@ public class ArtistSearchFragment extends Fragment {
             if (!updateArtistAdapter(mArtistList)) {
                 mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
                 showDefaultSearchMessage();
-                Toast.makeText(getActivity(),
-                        "No artists found. Please refine search.",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "No artists found. Please refine search.", Toast.LENGTH_SHORT).show();
             }
         }
     }
