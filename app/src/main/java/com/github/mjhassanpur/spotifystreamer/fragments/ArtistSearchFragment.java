@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import java.util.List;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
+import retrofit.RetrofitError;
 
 public class ArtistSearchFragment extends Fragment {
 
@@ -39,6 +41,7 @@ public class ArtistSearchFragment extends Fragment {
     private SpotifyService mSpotifyService;
     private final String KEY_ARTIST = "artist";
     private final String KEY_ARTISTS = "artists";
+    private final static String LOG_TAG = "ArtistSearchFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,7 +125,11 @@ public class ArtistSearchFragment extends Fragment {
         @Override
         protected Void doInBackground(String... params) {
             String query = params[0];
-            mArtistList = mSpotifyService.searchArtists(query).artists.items;
+            try {
+                mArtistList = mSpotifyService.searchArtists(query).artists.items;
+            } catch (RetrofitError e) {
+                Log.e(LOG_TAG, "An error occurred when attempting to retrieve artists");
+            }
             return null;
         }
 

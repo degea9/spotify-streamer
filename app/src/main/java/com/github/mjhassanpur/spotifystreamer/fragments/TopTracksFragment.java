@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
+import retrofit.RetrofitError;
 
 public class TopTracksFragment extends Fragment {
 
@@ -41,6 +43,7 @@ public class TopTracksFragment extends Fragment {
     private SpotifyService mSpotifyService;
     private final String KEY_TRACKS = "tracks";
     private final String KEY_ARTIST = "artist";
+    private final static String LOG_TAG = "TopTracksFragment";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,7 +115,11 @@ public class TopTracksFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             Map<String,Object> options = new HashMap<>();
             options.put("country", "US");
-            mTrackList = mSpotifyService.getArtistTopTrack(mArtist.id, options).tracks;
+            try {
+                mTrackList = mSpotifyService.getArtistTopTrack(mArtist.id, options).tracks;
+            } catch (RetrofitError e) {
+                Log.e(LOG_TAG, "An error occurred when attempting to retrieve tracks");
+            }
             return null;
         }
 
