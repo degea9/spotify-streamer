@@ -34,7 +34,6 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 
-
 public class ArtistSearchFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
@@ -164,7 +163,7 @@ public class ArtistSearchFragment extends Fragment {
     }
 
     /**
-     * Custom click listener for RecyclerView items
+     * A custom click listener for RecyclerView items
      */
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
@@ -176,11 +175,10 @@ public class ArtistSearchFragment extends Fragment {
             intent.putExtra(KEY_ARTIST, mGson.toJson(artist, artistType));
             startActivity(intent);
         }
-
     }
 
     /**
-     * Custom SearchView text listener
+     * A custom SearchView text listener
      *
      * @see <a href="http://stackoverflow.com/questions/10900348/edittext-textchangelistener">EditText & TextChangeListener</a>
      */
@@ -193,6 +191,8 @@ public class ArtistSearchFragment extends Fragment {
         @Override
         public boolean onQueryTextSubmit(String query) {
             searchArtists(query);
+            ArtistSearchActivity activity = (ArtistSearchActivity) getActivity();
+            activity.getSearchView().clearFocus();
             return false;
         }
 
@@ -201,6 +201,7 @@ public class ArtistSearchFragment extends Fragment {
             // If text is same as previous search
             if (mSearch != null && mSearch.equals(newText)) {
                 showArtistList();
+
                 return false;
             }
 
@@ -257,6 +258,5 @@ public class ArtistSearchFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 }

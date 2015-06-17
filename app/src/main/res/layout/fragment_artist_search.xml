@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,13 +12,13 @@
         android:layout_height="match_parent"
         android:id="@+id/message_container">
 
-        <include layout="@layout/default_search_message"/>
+        <include layout="@layout/default_search_message" />
 
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/artist_recycler_view"/>
+        android:id="@+id/artist_recycler_view" />
 
 </RelativeLayout>

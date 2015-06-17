@@ -9,10 +9,10 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
 import com.github.mjhassanpur.spotifystreamer.fragments.ArtistSearchFragment;
-
 
 public class ArtistSearchActivity extends AppCompatActivity {
 
@@ -41,20 +41,19 @@ public class ArtistSearchActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Get the search menu item
-     *
-     * @return The search menu item
-     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            Toast.makeText(this, "Settings coming soon...", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public MenuItem getSearchMenuItem() {
         return mSearchMenuItem;
     }
 
-    /**
-     * Get the SearchView
-     *
-     * @return The SearchView
-     */
     public SearchView getSearchView() {
         return mSearchView;
     }
@@ -71,4 +70,12 @@ public class ArtistSearchActivity extends AppCompatActivity {
         mSearchView.setIconifiedByDefault(false);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (MenuItemCompat.isActionViewExpanded(mSearchMenuItem)) {
+            MenuItemCompat.collapseActionView(mSearchMenuItem);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

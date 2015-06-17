@@ -29,7 +29,6 @@ import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
-
 public class TopTracksFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
@@ -119,15 +118,15 @@ public class TopTracksFragment extends Fragment {
     }
 
     /**
-     * Custom click listener for RecyclerView items
+     * A custom click listener for RecyclerView items
      */
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
         @Override
         public void onItemClick(View childView, int position) {
             // Play track
+            Toast.makeText(getActivity(), "Play feature coming soon...", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     /**
@@ -153,6 +152,5 @@ public class TopTracksFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 }

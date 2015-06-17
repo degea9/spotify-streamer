@@ -3,44 +3,44 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="69dp">
+    android:minHeight="@dimen/list_item_min_height">
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/list_item_image_size"
+        android:layout_height="@dimen/list_item_image_size"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginLeft="@dimen/list_item_left_right_margin"
+        android:layout_marginStart="@dimen/list_item_left_right_margin"
         android:scaleType="centerCrop"
-        android:id="@+id/list_item_album_image"/>
+        android:id="@+id/list_item_album_image" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="82dp"
-        android:layout_marginStart="82dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="@dimen/list_item_text_left_margin"
+        android:layout_marginStart="@dimen/list_item_text_left_margin"
+        android:layout_marginRight="@dimen/list_item_left_right_margin"
+        android:layout_marginEnd="@dimen/list_item_left_right_margin"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
+            android:textSize="@dimen/list_item_text_title_size"
             android:textColor="@android:color/black"
             android:singleLine="true"
             android:ellipsize="end"
-            android:id="@+id/list_item_track_name"/>
+            android:id="@+id/list_item_track_name" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="@dimen/list_item_text_subtitle_size"
             android:textColor="@android:color/darker_gray"
             android:singleLine="true"
             android:ellipsize="end"
-            android:id="@+id/list_item_album_name"/>
+            android:id="@+id/list_item_album_name" />
 
     </LinearLayout>
 

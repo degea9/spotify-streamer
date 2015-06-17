@@ -18,7 +18,7 @@ import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
- * A custom RecyclerView.Adapter for holding tracks
+ * A custom RecyclerView adapter for holding tracks
  *
  * @see <a href="https://developer.android.com/training/material/lists-cards.html">Creating Lists and Cards</a>
  */

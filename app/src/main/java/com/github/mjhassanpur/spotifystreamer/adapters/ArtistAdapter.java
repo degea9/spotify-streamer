@@ -17,9 +17,8 @@ import java.util.List;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 
-
 /**
- * A custom RecyclerView.Adapter for holding artists
+ * A custom RecyclerView adapter for holding artists
  *
  * @see <a href="https://developer.android.com/training/material/lists-cards.html">Creating Lists and Cards</a>
  */

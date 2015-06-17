@@ -5,13 +5,13 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_width="@dimen/default_search_message_image_size"
+        android:layout_height="@dimen/default_search_message_image_size"
         android:layout_centerHorizontal="true"
         android:paddingTop="48dp"
         android:paddingBottom="16dp"
         android:src="@drawable/default_search_image"
-        android:id="@+id/search_image"/>
+        android:id="@+id/search_image" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,6 +23,6 @@
         android:textSize="16sp"
         android:textColor="@android:color/darker_gray"
         android:text="@string/default_search_message_title"
-        android:id="@+id/title"/>
+        android:id="@+id/title" />
 
 </RelativeLayout>
