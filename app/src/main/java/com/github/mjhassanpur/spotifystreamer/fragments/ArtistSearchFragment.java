@@ -31,6 +31,7 @@ import kaaes.spotify.webapi.android.models.Artist;
 public class ArtistSearchFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
+    private View mDefaultMessageView;
     private ArtistAdapter mArtistAdapter;
     private List<Artist> mArtistList;
     private Type mArtistListType;
@@ -53,12 +54,11 @@ public class ArtistSearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_artist_search, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.artist_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                new OnItemClickListener()));
+        setUpRecyclerView();
+        mDefaultMessageView = rootView.findViewById(R.id.message_container);
         if (savedInstanceState == null) {
             mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
+            showDefaultSearchMessage();
         } else {
             // If instance is being recreated from a previous state
             String json = savedInstanceState.getString(KEY_ARTISTS);
@@ -74,6 +74,16 @@ public class ArtistSearchFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, mArtistListType));
         super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * Sets up the RecyclerView for displaying artists
+     */
+    private void setUpRecyclerView() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new OnItemClickListener()));
     }
 
     /**
@@ -97,11 +107,31 @@ public class ArtistSearchFragment extends Fragment {
         if (artists != null && !artists.isEmpty()) {
             mArtistAdapter = new ArtistAdapter(new ArrayList<>(artists));
             mRecyclerView.setAdapter(mArtistAdapter);
+            showArtistList();
             return true;
         }
         return false;
     }
 
+    /**
+     * Shows only the artist list and hides all other views
+     */
+    public void showArtistList() {
+        mDefaultMessageView.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Shows only the default search message and hides all other views
+     */
+    public void showDefaultSearchMessage() {
+        mRecyclerView.setVisibility(View.GONE);
+        mDefaultMessageView.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Custom click listener for RecyclerView items
+     */
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
         @Override
@@ -115,6 +145,9 @@ public class ArtistSearchFragment extends Fragment {
 
     }
 
+    /**
+     * Background task for searching artists
+     */
     private class SearchArtistsTask extends AsyncTask<String, Void, Void> {
 
         @Override
@@ -132,10 +165,12 @@ public class ArtistSearchFragment extends Fragment {
             if (!updateArtistAdapter(mArtistList)) {
                 // If no artists were found
                 mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
+                showDefaultSearchMessage();
                 Toast.makeText(getActivity(),
                         "No artists found. Please refine search.",
                         Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 }

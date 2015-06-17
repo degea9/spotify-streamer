@@ -6,6 +6,15 @@
     android:background="@android:color/white"
     tools:context="com.github.mjhassanpur.spotifystreamer.fragments.ArtistSearchFragment">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/message_container">
+
+        <include layout="@layout/default_search_message"/>
+
+    </FrameLayout>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

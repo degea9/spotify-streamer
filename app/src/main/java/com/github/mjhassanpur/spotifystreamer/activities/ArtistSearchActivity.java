@@ -27,7 +27,7 @@ public class ArtistSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_artist_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setTitle(R.string.title_activity_artist_search);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, new ArtistSearchFragment())
@@ -68,6 +68,26 @@ public class ArtistSearchActivity extends AppCompatActivity {
     }
 
     /**
+     * Shows only the artist list and hides all other views
+     */
+    private void showArtistList() {
+        ArtistSearchFragment fragment =
+                (ArtistSearchFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_container);
+        fragment.showArtistList();
+    }
+
+    /**
+     * Shows only the default search message and hides all other views
+     */
+    private void showDefaultSearchMessage() {
+        ArtistSearchFragment fragment =
+                (ArtistSearchFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_container);
+        fragment.showDefaultSearchMessage();
+    }
+
+    /**
      * Sets up the SearchView
      *
      * @param menuItem The search menu item
@@ -81,8 +101,13 @@ public class ArtistSearchActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchViewTextListener());
         if (mSearch != null) {
             // Retain search query on screen rotation
+            String savedSearch = mSearch;
             MenuItemCompat.expandActionView(menuItem);
+            mSearch = savedSearch;
             mSearchView.setQuery(mSearch, false);
+            if (mSearch.isEmpty()) {
+                showDefaultSearchMessage();
+            }
             mSearchView.clearFocus();
         }
     }
@@ -106,13 +131,19 @@ public class ArtistSearchActivity extends AppCompatActivity {
 
         @Override
         public boolean onQueryTextChange(final String newText) {
-            // If text is empty or same as previous search
-            if (newText.isEmpty() ||
-                    (mSearch != null && mSearch.equals(newText))) {
+            // If text is same as previous search
+            if (mSearch != null && mSearch.equals(newText)) {
+                showArtistList();
                 return false;
             }
 
             mSearch = newText;
+
+            // If text is empty
+            if (mSearch.isEmpty()) {
+                showDefaultSearchMessage();
+                return false;
+            }
 
             // Cancel previous search
             if (delayedAction != null) {

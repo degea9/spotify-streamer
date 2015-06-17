@@ -68,10 +68,7 @@ public class TopTracksFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.track_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
-        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                new OnItemClickListener()));
+        setUpRecyclerView();
         if (savedInstanceState == null) {
             fetchTopTracks();
         } else {
@@ -90,6 +87,16 @@ public class TopTracksFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, mTrackListType));
         super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * Sets up the RecyclerView for displaying tracks
+     */
+    private void setUpRecyclerView() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), null));
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
+                new OnItemClickListener()));
     }
 
     /**
@@ -114,15 +121,21 @@ public class TopTracksFragment extends Fragment {
         return false;
     }
 
+    /**
+     * Custom click listener for RecyclerView items
+     */
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
 
         @Override
         public void onItemClick(View childView, int position) {
-            // Do something
+            // Play track
         }
 
     }
 
+    /**
+     * Background task for fetching the artist's top tracks
+     */
     public class FetchTopTracksTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -143,5 +156,6 @@ public class TopTracksFragment extends Fragment {
                         Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 }
