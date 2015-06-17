@@ -2,6 +2,7 @@ package com.github.mjhassanpur.spotifystreamer.activities;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentManager;
@@ -77,6 +78,20 @@ public class ArtistSearchActivity extends AppCompatActivity {
             MenuItemCompat.collapseActionView(mSearchItem);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (mSearchFragment != null && Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            mSearchView.setQuery(query, false);
+            mSearchFragment.searchArtists(query);
         }
     }
 
