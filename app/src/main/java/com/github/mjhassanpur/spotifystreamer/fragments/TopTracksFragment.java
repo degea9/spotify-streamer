@@ -43,7 +43,8 @@ public class TopTracksFragment extends Fragment {
     private final String KEY_TRACKS = "tracks";
     private final String KEY_ARTIST = "artist";
 
-    public TopTracksFragment() {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         // Get an instance of the SpotifyApi
         mSpotifyService = new SpotifyApi().getService();
         // Get an instance of Gson for serialization / deserialization
@@ -52,15 +53,11 @@ public class TopTracksFragment extends Fragment {
         mArtistType = new TypeToken<Artist>() {}.getType();
         // The track list type
         mTrackListType = new TypeToken<List<Track>>() {}.getType();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         String json = getActivity().getIntent().getStringExtra(KEY_ARTIST);
         if (json != null) {
             mArtist = mGson.fromJson(json, mArtistType);
         }
+        super.onCreate(savedInstanceState);
     }
 
     @Override

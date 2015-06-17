@@ -3,16 +3,23 @@ package com.github.mjhassanpur.spotifystreamer.fragments;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.activities.ArtistSearchActivity;
 import com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
 import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
@@ -36,17 +43,23 @@ public class ArtistSearchFragment extends Fragment {
     private List<Artist> mArtistList;
     private Type mArtistListType;
     private Gson mGson;
+    private String mSearch;
     private SpotifyService mSpotifyService;
+    private final String KEY_SEARCH = "search";
     private final String KEY_ARTIST = "artist";
     private final String KEY_ARTISTS = "artists";
 
-    public ArtistSearchFragment() {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         // Get an instance of the SpotifyApi
         mSpotifyService = new SpotifyApi().getService();
         // Get an instance of Gson for serialization / deserialization
         mGson = new Gson();
         // The artist list type
         mArtistListType = new TypeToken<List<Artist>>() {}.getType();
+        // Must be true for onCreateOptionsMenu to be called
+        setHasOptionsMenu(true);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -61,6 +74,7 @@ public class ArtistSearchFragment extends Fragment {
             showDefaultSearchMessage();
         } else {
             // If instance is being recreated from a previous state
+            mSearch = savedInstanceState.getString(KEY_SEARCH);
             String json = savedInstanceState.getString(KEY_ARTISTS);
             if (json != null) {
                 mArtistList = mGson.fromJson(json, mArtistListType);
@@ -71,7 +85,27 @@ public class ArtistSearchFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        ArtistSearchActivity activity = (ArtistSearchActivity) getActivity();
+        SearchView searchView = activity.getSearchView();
+        searchView.setOnQueryTextListener(new SearchViewTextListener());
+        if (mSearch != null) {
+            // Retain search query on screen rotation
+            String savedSearch = mSearch;
+            MenuItemCompat.expandActionView(activity.getSearchMenuItem());
+            mSearch = savedSearch;
+            searchView.setQuery(mSearch, false);
+            if (mSearch.isEmpty()) {
+                showDefaultSearchMessage();
+            }
+            searchView.clearFocus();
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putString(KEY_SEARCH, mSearch);
         outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, mArtistListType));
         super.onSaveInstanceState(outState);
     }
@@ -143,6 +177,58 @@ public class ArtistSearchFragment extends Fragment {
             startActivity(intent);
         }
 
+    }
+
+    /**
+     * Custom SearchView text listener
+     *
+     * @see <a href="http://stackoverflow.com/questions/10900348/edittext-textchangelistener">EditText & TextChangeListener</a>
+     */
+    private class SearchViewTextListener implements SearchView.OnQueryTextListener {
+
+        private Handler handler = new Handler();
+        private Runnable delayedAction = null;
+        private final int DELAY_IN_MILLISECONDS = 300;
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            searchArtists(query);
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(final String newText) {
+            // If text is same as previous search
+            if (mSearch != null && mSearch.equals(newText)) {
+                showArtistList();
+                return false;
+            }
+
+            mSearch = newText;
+
+            // If text is empty
+            if (mSearch.isEmpty()) {
+                showDefaultSearchMessage();
+                return false;
+            }
+
+            // Cancel previous search
+            if (delayedAction != null) {
+                handler.removeCallbacks(delayedAction);
+            }
+
+            // Define a new search
+            delayedAction = new Runnable() {
+                @Override
+                public void run() {
+                    searchArtists(mSearch);
+                }
+            };
+
+            // Delay the search
+            handler.postDelayed(delayedAction, DELAY_IN_MILLISECONDS);
+            return false;
+        }
     }
 
     /**
