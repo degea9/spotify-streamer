@@ -17,19 +17,28 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.SEARCH" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.TopTracksActivity"
             android:label="@string/title_activity_top_tracks"
-            android:parentActivityName=".activities.ArtistSearchActivity" >
+            android:launchMode="singleTop" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.github.mjhassanpur.spotifystreamer.activities.ArtistSearchActivity" />
+        </activity>
+        <activity
+            android:name=".activities.PlayerActivity"
+            android:label="@string/title_activity_player" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity" />
         </activity>
     </application>
 

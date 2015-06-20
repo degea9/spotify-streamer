@@ -6,6 +6,7 @@
     <string name="action_search">Search</string>
     <string name="title_activity_artist_search">Search</string>
     <string name="title_activity_top_tracks">Top Tracks</string>
+    <string name="title_activity_player">PlayerActivity</string>
     <string name="default_search_message_title">Find your favorite artists</string>
 
 </resources>

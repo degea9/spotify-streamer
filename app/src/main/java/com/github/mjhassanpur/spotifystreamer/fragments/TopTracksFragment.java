@@ -1,5 +1,6 @@
 package com.github.mjhassanpur.spotifystreamer.fragments;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.activities.PlayerActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.TrackAdapter;
 import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
 import com.google.gson.Gson;
@@ -104,8 +106,7 @@ public class TopTracksFragment extends Fragment {
 
         @Override
         public void onItemClick(View childView, int position) {
-            // Play track
-            Toast.makeText(getActivity(), "Play feature coming soon...", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(getActivity(), PlayerActivity.class));
         }
     }
 
