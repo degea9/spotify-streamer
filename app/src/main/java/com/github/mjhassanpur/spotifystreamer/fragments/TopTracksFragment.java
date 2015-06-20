@@ -43,6 +43,7 @@ public class TopTracksFragment extends Fragment {
     private Type mArtistType;
     private Gson mGson;
     private SpotifyService mSpotifyService;
+    private final String KEY_TRACK = "track";
     private final String KEY_TRACKS = "tracks";
     private final String KEY_ARTIST = "artist";
     private final static String LOG_TAG = "TopTracksFragment";
@@ -106,7 +107,11 @@ public class TopTracksFragment extends Fragment {
 
         @Override
         public void onItemClick(View childView, int position) {
-            startActivity(new Intent(getActivity(), PlayerActivity.class));
+            Intent intent = new Intent(getActivity(), PlayerActivity.class);
+            Track track = mTrackList.get(position);
+            Type trackType = new TypeToken<Track>() {}.getType();
+            intent.putExtra(KEY_TRACK, mGson.toJson(track, trackType));
+            startActivity(intent);
         }
     }
 
