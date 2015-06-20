@@ -1,6 +1,7 @@
 package com.github.mjhassanpur.spotifystreamer.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -8,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.fragments.PlayerFragment;
 
 public class PlayerActivity extends AppCompatActivity {
 
@@ -18,6 +20,14 @@ public class PlayerActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        FragmentManager fm = getSupportFragmentManager();
+        PlayerFragment playerFragment = (PlayerFragment) fm.findFragmentById(R.id.fragment_container);
+
+        if (playerFragment == null) {
+            playerFragment = new PlayerFragment();
+            fm.beginTransaction().add(R.id.fragment_container, playerFragment).commit();
+        }
     }
 
     @Override
