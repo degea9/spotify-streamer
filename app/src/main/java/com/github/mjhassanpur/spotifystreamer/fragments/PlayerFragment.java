@@ -17,11 +17,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.Types;
 import com.github.mjhassanpur.spotifystreamer.services.MusicService;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.models.ArtistSimple;
@@ -31,9 +30,7 @@ import kaaes.spotify.webapi.android.models.Track;
 public class PlayerFragment extends DialogFragment {
 
     private Track mSelectedTrack;
-    private Type mTrackType;
     private List<Track> mTrackList;
-    private Type mTrackListType;
     private Gson mGson;
     private MediaPlayer mPlayer;
     private SeekBar mSeekbar;
@@ -53,12 +50,10 @@ public class PlayerFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         mGson = new Gson();
-        mTrackType = new TypeToken<Track>() {}.getType();
-        mTrackListType = new TypeToken<List<Track>>() {}.getType();
         mTrackPosition = getActivity().getIntent().getIntExtra(KEY_SELECTED_TRACK, 0);
         String json = getActivity().getIntent().getStringExtra(KEY_TRACKS);
         if (json != null) {
-            mTrackList = mGson.fromJson(json, mTrackListType);
+            mTrackList = mGson.fromJson(json, Types.TRACK_LIST);
             mSelectedTrack = mTrackList.get(mTrackPosition);
 
         }

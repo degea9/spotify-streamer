@@ -15,13 +15,12 @@ import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.Types;
 import com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
 import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +35,6 @@ public class ArtistSearchFragment extends Fragment {
     private View mDefaultMessageView;
     private ArtistAdapter mArtistAdapter;
     private List<Artist> mArtistList;
-    private Type mArtistListType;
     private Gson mGson;
     private SpotifyService mSpotifyService;
     private final String KEY_ARTIST = "artist";
@@ -48,7 +46,6 @@ public class ArtistSearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mSpotifyService = new SpotifyApi().getService();
         mGson = new Gson();
-        mArtistListType = new TypeToken<List<Artist>>() {}.getType();
     }
 
     @Override
@@ -63,7 +60,7 @@ public class ArtistSearchFragment extends Fragment {
         } else {
             String json = savedInstanceState.getString(KEY_ARTISTS);
             if (json != null) {
-                mArtistList = mGson.fromJson(json, mArtistListType);
+                mArtistList = mGson.fromJson(json, Types.ARTIST_LIST);
                 updateArtistAdapter(mArtistList);
             }
         }
@@ -73,7 +70,7 @@ public class ArtistSearchFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, mArtistListType));
+        outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, Types.ARTIST_LIST));
     }
 
     private void setupRecyclerView() {
@@ -114,8 +111,7 @@ public class ArtistSearchFragment extends Fragment {
         public void onItemClick(View childView, int position) {
             Intent intent = new Intent(getActivity(), TopTracksActivity.class);
             Artist artist = mArtistList.get(position);
-            Type artistType = new TypeToken<Artist>() {}.getType();
-            intent.putExtra(KEY_ARTIST, mGson.toJson(artist, artistType));
+            intent.putExtra(KEY_ARTIST, mGson.toJson(artist, Types.ARTIST));
             startActivity(intent);
         }
     }
