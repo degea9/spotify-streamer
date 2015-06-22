@@ -40,6 +40,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity" />
         </activity>
+
+        <service
+            android:name=".services.MusicService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
