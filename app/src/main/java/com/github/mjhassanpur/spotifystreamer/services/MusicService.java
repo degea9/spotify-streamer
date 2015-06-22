@@ -14,7 +14,6 @@ import java.io.IOException;
 
 public class MusicService extends Service implements Playback, MediaPlayer.OnPreparedListener,
         MediaPlayer.OnSeekCompleteListener, MediaPlayer.OnCompletionListener, MediaPlayer.OnErrorListener {
-
     public static final String ACTION_PLAY = "com.github.mjhassanpur.spotifystreamer.ACTION_PLAY";
     public static final String KEY_URL = "url";
     private static final String TAG = "MusicService";
@@ -22,8 +21,7 @@ public class MusicService extends Service implements Playback, MediaPlayer.OnPre
     private MediaPlayer mMediaPlayer = null;
     private final IBinder mBinder = new MusicBinder();
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
+    @Override public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getAction().equals(ACTION_PLAY)) {
             mUrl = intent.getStringExtra(KEY_URL);
             try {
@@ -38,53 +36,43 @@ public class MusicService extends Service implements Playback, MediaPlayer.OnPre
         return START_STICKY;
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
+    @Override public IBinder onBind(Intent intent) {
         return mBinder;
     }
 
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
+    @Override public void onPrepared(MediaPlayer mediaPlayer) {
         mediaPlayer.start();
     }
 
-    @Override
-    public void onSeekComplete(MediaPlayer mediaPlayer) {
+    @Override public void onSeekComplete(MediaPlayer mediaPlayer) {
     }
 
-    @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
+    @Override public void onCompletion(MediaPlayer mediaPlayer) {
         mediaPlayer.reset();
     }
 
-    @Override
-    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+    @Override public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
         mediaPlayer.reset();
         return false;
     }
 
-    @Override
-    public void play() {
-        mMediaPlayer.start();
-    }
-
-    @Override
-    public void pause() {
-        mMediaPlayer.pause();
-    }
-
-    @Override
-    public void seekTo(int position) {
-        mMediaPlayer.seekTo(position);
-    }
-
-    @Override
-    public boolean isPlaying() {
+    @Override public boolean isPlaying() {
         return mMediaPlayer.isPlaying();
     }
 
-    @Override
-    public void onDestroy() {
+    @Override public void play() {
+        mMediaPlayer.start();
+    }
+
+    @Override public void pause() {
+        mMediaPlayer.pause();
+    }
+
+    @Override public void seekTo(int position) {
+        mMediaPlayer.seekTo(position);
+    }
+
+    @Override public void onDestroy() {
         if (mMediaPlayer != null) {
             mMediaPlayer.release();
         }
@@ -99,7 +87,6 @@ public class MusicService extends Service implements Playback, MediaPlayer.OnPre
     }
 
     public class MusicBinder extends Binder {
-
         public MusicService getService() {
             return MusicService.this;
         }

@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
@@ -33,8 +35,7 @@ import kaaes.spotify.webapi.android.models.Track;
 import retrofit.RetrofitError;
 
 public class TopTracksFragment extends Fragment {
-
-    private RecyclerView mRecyclerView;
+    @InjectView(R.id.track_recycler_view) RecyclerView mRecyclerView;
     private TrackAdapter mTrackAdapter;
     private List<Track> mTrackList;
     private Artist mArtist;
@@ -45,8 +46,7 @@ public class TopTracksFragment extends Fragment {
     private final String KEY_ARTIST = "artist";
     private final static String LOG_TAG = "TopTracksFragment";
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         mSpotifyService = new SpotifyApi().getService();
         mGson = new Gson();
         String json = getActivity().getIntent().getStringExtra(KEY_ARTIST);
@@ -56,10 +56,9 @@ public class TopTracksFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.track_recycler_view);
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_top_tracks, container, false);
+        ButterKnife.inject(this, view);
         setupRecyclerView();
         if (savedInstanceState == null) {
             fetchTopTracks();
@@ -70,11 +69,10 @@ public class TopTracksFragment extends Fragment {
                 updateTrackAdapter(mTrackList);
             }
         }
-        return rootView;
+        return view;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
+    @Override public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, Types.TRACK_LIST));
     }
@@ -99,9 +97,7 @@ public class TopTracksFragment extends Fragment {
     }
 
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
-
-        @Override
-        public void onItemClick(View childView, int position) {
+        @Override public void onItemClick(View childView, int position) {
             Intent intent = new Intent(getActivity(), PlayerActivity.class);
             intent.putExtra(KEY_TRACKS, mGson.toJson(mTrackList, Types.TRACK_LIST));
             intent.putExtra(KEY_SELECTED_TRACK, position);
@@ -110,9 +106,7 @@ public class TopTracksFragment extends Fragment {
     }
 
     public class FetchTopTracksTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... params) {
+        @Override protected Void doInBackground(Void... params) {
             Map<String,Object> options = new HashMap<>();
             options.put("country", "US");
             try {
@@ -123,8 +117,7 @@ public class TopTracksFragment extends Fragment {
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
+        @Override protected void onPostExecute(Void aVoid) {
             if (!updateTrackAdapter(mTrackList)) {
                 mRecyclerView.setAdapter(new TrackAdapter(new ArrayList<Track>()));
                 Toast.makeText(getActivity(), "Sorry, no tracks found.", Toast.LENGTH_SHORT).show();

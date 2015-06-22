@@ -9,7 +9,6 @@ import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class Types {
-
     public static final Type ARTIST = new TypeToken<Artist>() {}.getType();
     public static final Type ARTIST_LIST = new TypeToken<List<Artist>>() {}.getType();
     public static final Type TRACK_LIST = new TypeToken<List<Track>>() {}.getType();
