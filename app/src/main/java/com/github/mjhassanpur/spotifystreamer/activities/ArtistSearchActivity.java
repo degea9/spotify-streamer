@@ -15,14 +15,23 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.Types;
 import com.github.mjhassanpur.spotifystreamer.fragments.ArtistSearchFragment;
+import com.github.mjhassanpur.spotifystreamer.fragments.TopTracksFragment;
+import com.google.gson.Gson;
 
-public class ArtistSearchActivity extends AppCompatActivity {
+import kaaes.spotify.webapi.android.models.Artist;
+
+public class ArtistSearchActivity extends AppCompatActivity implements ArtistSearchFragment.Callback {
     private String mQuery;
     private MenuItem mSearchItem;
     private SearchView mSearchView;
     private ArtistSearchFragment mSearchFragment;
     private final String KEY_QUERY = "query";
+    private static final String TOP_TRACKS_FRAGMENT_TAG = "TTFTAG";
+    private final String KEY_ARTIST = "artist";
+    private boolean mTwoPane;
+    private boolean mRetainTopTracks;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,11 +41,15 @@ public class ArtistSearchActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.title_activity_artist_search);
 
         FragmentManager fm = getSupportFragmentManager();
-        mSearchFragment = (ArtistSearchFragment) fm.findFragmentById(R.id.fragment_container);
+        mSearchFragment = (ArtistSearchFragment) fm.findFragmentById(R.id.fragment_artist_search);
 
-        if (mSearchFragment == null) {
-            mSearchFragment = new ArtistSearchFragment();
-            fm.beginTransaction().add(R.id.fragment_container, mSearchFragment).commit();
+        if (findViewById(R.id.top_tracks_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                replaceTopTracks(new TopTracksFragment());
+            }
+        } else {
+            mTwoPane = false;
         }
     }
 
@@ -99,12 +112,19 @@ public class ArtistSearchActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchViewTextListener());
         if (mQuery != null) {
             // Retain search query on screen rotation
+            if (!mQuery.isEmpty()) {
+                mRetainTopTracks = true;
+            }
             String savedSearch = mQuery;
             mSearchItem.expandActionView();
+            mRetainTopTracks = false;
             mQuery = savedSearch;
             mSearchView.setQuery(mQuery, false);
             if (mQuery.isEmpty()) {
                 mSearchFragment.showDefaultSearchMessage();
+                if (mTwoPane) {
+                    replaceTopTracks(new TopTracksFragment());
+                }
             }
             mSearchView.clearFocus();
         }
@@ -137,6 +157,9 @@ public class ArtistSearchActivity extends AppCompatActivity {
 
             if (TextUtils.isEmpty(mQuery)) {
                 mSearchFragment.showDefaultSearchMessage();
+                if (mTwoPane && !mRetainTopTracks) {
+                    replaceTopTracks(new TopTracksFragment());
+                }
                 return false;
             }
 
@@ -156,6 +179,27 @@ public class ArtistSearchActivity extends AppCompatActivity {
             // Delay the search
             handler.postDelayed(delayedAction, DELAY_IN_MILLISECONDS);
             return false;
+        }
+    }
+
+    private void replaceTopTracks(TopTracksFragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.top_tracks_container, fragment, TOP_TRACKS_FRAGMENT_TAG)
+                .commit();
+    }
+
+    @Override public void onItemSelected(Artist artist) {
+        Gson gson = new Gson();
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putString(KEY_ARTIST, gson.toJson(artist, Types.ARTIST));
+            TopTracksFragment fragment = new TopTracksFragment();
+            fragment.setArguments(args);
+            replaceTopTracks(fragment);
+        } else {
+            Intent intent = new Intent(this, TopTracksActivity.class);
+            intent.putExtra(KEY_ARTIST, gson.toJson(artist, Types.ARTIST));
+            startActivity(intent);
         }
     }
 }

@@ -49,9 +49,17 @@ public class TopTracksFragment extends Fragment {
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         mSpotifyService = new SpotifyApi().getService();
         mGson = new Gson();
-        String json = getActivity().getIntent().getStringExtra(KEY_ARTIST);
-        if (json != null) {
-            mArtist = mGson.fromJson(json, Types.ARTIST);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            String json = arguments.getString(KEY_ARTIST);
+            if (json != null) {
+                mArtist = mGson.fromJson(json, Types.ARTIST);
+            }
+        } else {
+            String json = getActivity().getIntent().getStringExtra(KEY_ARTIST);
+            if (json != null) {
+                mArtist = mGson.fromJson(json, Types.ARTIST);
+            }
         }
         super.onCreate(savedInstanceState);
     }
@@ -61,7 +69,9 @@ public class TopTracksFragment extends Fragment {
         ButterKnife.inject(this, view);
         setupRecyclerView();
         if (savedInstanceState == null) {
-            fetchTopTracks();
+            if (mArtist != null) {
+                fetchTopTracks();
+            }
         } else {
             String json = savedInstanceState.getString(KEY_TRACKS);
             if (json != null) {

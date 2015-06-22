@@ -1,6 +1,5 @@
 package com.github.mjhassanpur.spotifystreamer.fragments;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +15,6 @@ import android.widget.Toast;
 import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
 import com.github.mjhassanpur.spotifystreamer.Types;
-import com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
 import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
 import com.google.gson.Gson;
@@ -38,9 +36,12 @@ public class ArtistSearchFragment extends Fragment {
     private List<Artist> mArtistList;
     private Gson mGson;
     private SpotifyService mSpotifyService;
-    private final String KEY_ARTIST = "artist";
     private final String KEY_ARTISTS = "artists";
     private final static String LOG_TAG = "ArtistSearchFragment";
+
+    public interface Callback {
+        public void onItemSelected(Artist artist);
+    }
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,10 +105,8 @@ public class ArtistSearchFragment extends Fragment {
 
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
         @Override public void onItemClick(View childView, int position) {
-            Intent intent = new Intent(getActivity(), TopTracksActivity.class);
             Artist artist = mArtistList.get(position);
-            intent.putExtra(KEY_ARTIST, mGson.toJson(artist, Types.ARTIST));
-            startActivity(intent);
+            ((Callback) getActivity()).onItemSelected(artist);
         }
     }
 
