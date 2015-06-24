@@ -15,14 +15,20 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.Types;
 import com.github.mjhassanpur.spotifystreamer.fragments.ArtistSearchFragment;
+import com.github.mjhassanpur.spotifystreamer.fragments.PlayerFragment;
 import com.github.mjhassanpur.spotifystreamer.fragments.TopTracksFragment;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.Track;
 
-public class ArtistSearchActivity extends AppCompatActivity implements ArtistSearchFragment.Callback {
+public class ArtistSearchActivity extends AppCompatActivity implements ArtistSearchFragment.Callback,
+        TopTracksFragment.Callback {
     private String mQuery;
     private MenuItem mSearchItem;
     private SearchView mSearchView;
@@ -30,6 +36,10 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
     private final String KEY_QUERY = "query";
     private static final String TOP_TRACKS_FRAGMENT_TAG = "TTFTAG";
     private final String KEY_ARTIST = "artist";
+    private final String KEY_TRACKS = "tracks";
+    private final String KEY_SELECTED_TRACK = "selectedTrack";
+    private final Type mArtistType = new TypeToken<Artist>() {}.getType();
+    private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
     private boolean mTwoPane;
     private boolean mRetainTopTracks;
 
@@ -192,13 +202,31 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         Gson gson = new Gson();
         if (mTwoPane) {
             Bundle args = new Bundle();
-            args.putString(KEY_ARTIST, gson.toJson(artist, Types.ARTIST));
+            args.putString(KEY_ARTIST, gson.toJson(artist, mArtistType));
             TopTracksFragment fragment = new TopTracksFragment();
             fragment.setArguments(args);
             replaceTopTracks(fragment);
         } else {
             Intent intent = new Intent(this, TopTracksActivity.class);
-            intent.putExtra(KEY_ARTIST, gson.toJson(artist, Types.ARTIST));
+            intent.putExtra(KEY_ARTIST, gson.toJson(artist, mArtistType));
+            startActivity(intent);
+        }
+    }
+
+    @Override public void onItemSelected(List<Track> tracks, int position) {
+        Gson gson = new Gson();
+        FragmentManager fm = getSupportFragmentManager();
+        if (mTwoPane) {
+            Bundle args = new Bundle();
+            args.putString(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
+            args.putInt(KEY_SELECTED_TRACK, position);
+            PlayerFragment fragment = new PlayerFragment();
+            fragment.setArguments(args);
+            fragment.show(fm, "dialog");
+        } else {
+            Intent intent = new Intent(this, PlayerActivity.class);
+            intent.putExtra(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
+            intent.putExtra(KEY_SELECTED_TRACK, position);
             startActivity(intent);
         }
     }

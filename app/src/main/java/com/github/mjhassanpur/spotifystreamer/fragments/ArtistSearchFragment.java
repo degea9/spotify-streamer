@@ -14,11 +14,12 @@ import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.Types;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
 import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +39,10 @@ public class ArtistSearchFragment extends Fragment {
     private SpotifyService mSpotifyService;
     private final String KEY_ARTISTS = "artists";
     private final static String LOG_TAG = "ArtistSearchFragment";
+    private final Type mArtistListType = new TypeToken<List<Artist>>() {}.getType();
 
     public interface Callback {
-        public void onItemSelected(Artist artist);
+        void onItemSelected(Artist artist);
     }
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,16 +61,21 @@ public class ArtistSearchFragment extends Fragment {
         } else {
             String json = savedInstanceState.getString(KEY_ARTISTS);
             if (json != null) {
-                mArtistList = mGson.fromJson(json, Types.ARTIST_LIST);
+                mArtistList = mGson.fromJson(json, mArtistListType);
                 updateArtistAdapter(mArtistList);
             }
         }
         return view;
     }
 
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
     @Override public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, Types.ARTIST_LIST));
+        outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, mArtistListType));
     }
 
     private void setupRecyclerView() {

@@ -16,10 +16,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.Types;
 import com.github.mjhassanpur.spotifystreamer.services.MusicService;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -46,15 +47,25 @@ public class PlayerFragment extends DialogFragment {
     private int mTrackPosition;
     private final String KEY_SELECTED_TRACK = "selectedTrack";
     private final String KEY_TRACKS = "tracks";
+    private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
 
     @Override public void onCreate(Bundle savedInstanceState) {
         mGson = new Gson();
-        mTrackPosition = getActivity().getIntent().getIntExtra(KEY_SELECTED_TRACK, 0);
-        String json = getActivity().getIntent().getStringExtra(KEY_TRACKS);
-        if (json != null) {
-            mTrackList = mGson.fromJson(json, Types.TRACK_LIST);
-            mSelectedTrack = mTrackList.get(mTrackPosition);
-
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mTrackPosition = arguments.getInt(KEY_SELECTED_TRACK);
+            String json = arguments.getString(KEY_TRACKS);
+            if (json != null) {
+                mTrackList = mGson.fromJson(json, mTrackListType);
+                mSelectedTrack = mTrackList.get(mTrackPosition);
+            }
+        } else {
+            mTrackPosition = getActivity().getIntent().getIntExtra(KEY_SELECTED_TRACK, 0);
+            String json = getActivity().getIntent().getStringExtra(KEY_TRACKS);
+            if (json != null) {
+                mTrackList = mGson.fromJson(json, mTrackListType);
+                mSelectedTrack = mTrackList.get(mTrackPosition);
+            }
         }
         super.onCreate(savedInstanceState);
     }
@@ -62,6 +73,13 @@ public class PlayerFragment extends DialogFragment {
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.inject(this, view);
+        List<Image> images = mSelectedTrack.album.images;
+        String url = null;
+        if (images != null && !images.isEmpty()) {
+            url = images.get(0).url;
+        }
+        mAlbumImage.setImageResource(R.drawable.ic_launcher);
+        Glide.with(this).load(url).error(R.drawable.default_album_image).into(mAlbumImage);
         mTrackName.setText(mSelectedTrack.name);
         List<ArtistSimple> artists = mSelectedTrack.artists;
         if (artists != null && !artists.isEmpty()) {
@@ -86,12 +104,6 @@ public class PlayerFragment extends DialogFragment {
 
     @Override public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        List<Image> images = mSelectedTrack.album.images;
-        String url = null;
-        if (images != null && !images.isEmpty()) {
-            url = images.get(0).url;
-        }
-        Glide.with(getActivity()).load(url).error(R.drawable.default_album_image).into(mAlbumImage);
         Intent intent = new Intent(getActivity(), MusicService.class);
         intent.setAction(MusicService.ACTION_PLAY);
         intent.putExtra(MusicService.KEY_URL, mSelectedTrack.preview_url);

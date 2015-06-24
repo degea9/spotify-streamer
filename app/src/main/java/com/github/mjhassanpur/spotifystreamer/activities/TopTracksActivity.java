@@ -1,5 +1,6 @@
 package com.github.mjhassanpur.spotifystreamer.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -10,8 +11,19 @@ import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
 import com.github.mjhassanpur.spotifystreamer.fragments.TopTracksFragment;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-public class TopTracksActivity extends AppCompatActivity {
+import java.lang.reflect.Type;
+import java.util.List;
+
+import kaaes.spotify.webapi.android.models.Track;
+
+public class TopTracksActivity extends AppCompatActivity implements TopTracksFragment.Callback {
+    private final String KEY_TRACKS = "tracks";
+    private final String KEY_SELECTED_TRACK = "selectedTrack";
+    private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
+
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_tracks);
@@ -39,5 +51,13 @@ public class TopTracksActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override public void onItemSelected(List<Track> tracks, int position) {
+        Gson gson = new Gson();
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
+        intent.putExtra(KEY_SELECTED_TRACK, position);
+        startActivity(intent);
     }
 }

@@ -1,6 +1,5 @@
 package com.github.mjhassanpur.spotifystreamer.fragments;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,12 +14,12 @@ import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.Types;
-import com.github.mjhassanpur.spotifystreamer.activities.PlayerActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.TrackAdapter;
 import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +41,14 @@ public class TopTracksFragment extends Fragment {
     private Gson mGson;
     private SpotifyService mSpotifyService;
     private final String KEY_TRACKS = "tracks";
-    private final String KEY_SELECTED_TRACK = "selectedTrack";
     private final String KEY_ARTIST = "artist";
-    private final static String LOG_TAG = "TopTracksFragment";
+    private static final String LOG_TAG = "TopTracksFragment";
+    private final Type mArtistType = new TypeToken<Artist>() {}.getType();
+    private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
+
+    public interface Callback {
+        void onItemSelected(List<Track> tracks, int position);
+    }
 
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         mSpotifyService = new SpotifyApi().getService();
@@ -53,12 +57,12 @@ public class TopTracksFragment extends Fragment {
         if (arguments != null) {
             String json = arguments.getString(KEY_ARTIST);
             if (json != null) {
-                mArtist = mGson.fromJson(json, Types.ARTIST);
+                mArtist = mGson.fromJson(json, mArtistType);
             }
         } else {
             String json = getActivity().getIntent().getStringExtra(KEY_ARTIST);
             if (json != null) {
-                mArtist = mGson.fromJson(json, Types.ARTIST);
+                mArtist = mGson.fromJson(json, mArtistType);
             }
         }
         super.onCreate(savedInstanceState);
@@ -75,16 +79,21 @@ public class TopTracksFragment extends Fragment {
         } else {
             String json = savedInstanceState.getString(KEY_TRACKS);
             if (json != null) {
-                mTrackList = mGson.fromJson(json, Types.TRACK_LIST);
+                mTrackList = mGson.fromJson(json, mTrackListType);
                 updateTrackAdapter(mTrackList);
             }
         }
         return view;
     }
 
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
     @Override public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, Types.TRACK_LIST));
+        outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, mTrackListType));
     }
 
     private void setupRecyclerView() {
@@ -108,10 +117,7 @@ public class TopTracksFragment extends Fragment {
 
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
         @Override public void onItemClick(View childView, int position) {
-            Intent intent = new Intent(getActivity(), PlayerActivity.class);
-            intent.putExtra(KEY_TRACKS, mGson.toJson(mTrackList, Types.TRACK_LIST));
-            intent.putExtra(KEY_SELECTED_TRACK, position);
-            startActivity(intent);
+            ((Callback) getActivity()).onItemSelected(mTrackList, position);
         }
     }
 
