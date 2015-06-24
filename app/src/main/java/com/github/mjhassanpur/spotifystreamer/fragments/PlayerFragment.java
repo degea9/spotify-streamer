@@ -95,34 +95,32 @@ public class PlayerFragment extends DialogFragment {
     @OnClick(R.id.play_pause) public void playPause() {
         if (mBoundService.isPlaying()) {
             mBoundService.pause();
+            mPlayPause.setImageResource(android.R.drawable.ic_media_play);
         } else {
             mBoundService.play();
+            mPlayPause.setImageResource(android.R.drawable.ic_media_pause);
         }
     }
 
     @OnClick(R.id.next) public void skipToNext() {
         if (mTrackPosition < mTrackList.size() - 1) {
             mTrackPosition++;
-            mSelectedTrack = mTrackList.get(mTrackPosition);
-            mBoundService.skipToNext(mSelectedTrack.preview_url);
         } else {
             mTrackPosition = 0;
-            mSelectedTrack = mTrackList.get(mTrackPosition);
-            mBoundService.skipToNext(mSelectedTrack.preview_url);
         }
+        mSelectedTrack = mTrackList.get(mTrackPosition);
+        mBoundService.skipToNext(mSelectedTrack.preview_url);
         setupView();
     }
 
     @OnClick(R.id.prev) public void skipToPrev() {
         if (mTrackPosition > 0) {
             mTrackPosition--;
-            mSelectedTrack = mTrackList.get(mTrackPosition);
-            mBoundService.skipToPrev(mSelectedTrack.preview_url);
         } else {
             mTrackPosition = mTrackList.size() - 1;
-            mSelectedTrack = mTrackList.get(mTrackPosition);
-            mBoundService.skipToPrev(mSelectedTrack.preview_url);
         }
+        mSelectedTrack = mTrackList.get(mTrackPosition);
+        mBoundService.skipToPrev(mSelectedTrack.preview_url);
         setupView();
     }
 
