@@ -50,24 +50,26 @@ public class PlayerFragment extends DialogFragment {
     private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
 
     @Override public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mGson = new Gson();
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            mTrackPosition = arguments.getInt(KEY_SELECTED_TRACK);
-            String json = arguments.getString(KEY_TRACKS);
-            if (json != null) {
-                mTrackList = mGson.fromJson(json, mTrackListType);
-                mSelectedTrack = mTrackList.get(mTrackPosition);
+        String json = null;
+        if (savedInstanceState == null) {
+            Bundle arguments = getArguments();
+            if (arguments != null) {
+                mTrackPosition = arguments.getInt(KEY_SELECTED_TRACK);
+                json = arguments.getString(KEY_TRACKS);
+            } else {
+                mTrackPosition = getActivity().getIntent().getIntExtra(KEY_SELECTED_TRACK, 0);
+                json = getActivity().getIntent().getStringExtra(KEY_TRACKS);
             }
         } else {
-            mTrackPosition = getActivity().getIntent().getIntExtra(KEY_SELECTED_TRACK, 0);
-            String json = getActivity().getIntent().getStringExtra(KEY_TRACKS);
-            if (json != null) {
-                mTrackList = mGson.fromJson(json, mTrackListType);
-                mSelectedTrack = mTrackList.get(mTrackPosition);
-            }
+            mTrackPosition = savedInstanceState.getInt(KEY_SELECTED_TRACK);
+            json = savedInstanceState.getString(KEY_TRACKS);
         }
-        super.onCreate(savedInstanceState);
+        if (json != null) {
+            mTrackList = mGson.fromJson(json, mTrackListType);
+            mSelectedTrack = mTrackList.get(mTrackPosition);
+        }
     }
 
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,6 +92,13 @@ public class PlayerFragment extends DialogFragment {
             mArtistName.setText(artists.get(0).name);
         }
         mAlbumName.setText(mSelectedTrack.album.name);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_SELECTED_TRACK, mTrackPosition);
+        outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, mTrackListType));
     }
 
     @OnClick(R.id.play_pause) public void playPause() {
