@@ -73,12 +73,16 @@ public class PlayerFragment extends DialogFragment {
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.inject(this, view);
+        setupView();
+        return view;
+    }
+
+    private void setupView() {
         List<Image> images = mSelectedTrack.album.images;
         String url = null;
         if (images != null && !images.isEmpty()) {
             url = images.get(0).url;
         }
-        mAlbumImage.setImageResource(R.drawable.ic_launcher);
         Glide.with(this).load(url).error(R.drawable.default_album_image).into(mAlbumImage);
         mTrackName.setText(mSelectedTrack.name);
         List<ArtistSimple> artists = mSelectedTrack.artists;
@@ -86,7 +90,6 @@ public class PlayerFragment extends DialogFragment {
             mArtistName.setText(artists.get(0).name);
         }
         mAlbumName.setText(mSelectedTrack.album.name);
-        return view;
     }
 
     @OnClick(R.id.play_pause) public void playPause() {
@@ -95,6 +98,32 @@ public class PlayerFragment extends DialogFragment {
         } else {
             mBoundService.play();
         }
+    }
+
+    @OnClick(R.id.next) public void skipToNext() {
+        if (mTrackPosition < mTrackList.size() - 1) {
+            mTrackPosition++;
+            mSelectedTrack = mTrackList.get(mTrackPosition);
+            mBoundService.skipToNext(mSelectedTrack.preview_url);
+        } else {
+            mTrackPosition = 0;
+            mSelectedTrack = mTrackList.get(mTrackPosition);
+            mBoundService.skipToNext(mSelectedTrack.preview_url);
+        }
+        setupView();
+    }
+
+    @OnClick(R.id.prev) public void skipToPrev() {
+        if (mTrackPosition > 0) {
+            mTrackPosition--;
+            mSelectedTrack = mTrackList.get(mTrackPosition);
+            mBoundService.skipToPrev(mSelectedTrack.preview_url);
+        } else {
+            mTrackPosition = mTrackList.size() - 1;
+            mSelectedTrack = mTrackList.get(mTrackPosition);
+            mBoundService.skipToPrev(mSelectedTrack.preview_url);
+        }
+        setupView();
     }
 
     @Override public void onDestroyView() {

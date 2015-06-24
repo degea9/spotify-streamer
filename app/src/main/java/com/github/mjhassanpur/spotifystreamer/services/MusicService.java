@@ -30,7 +30,7 @@ public class MusicService extends Service implements Playback, MediaPlayer.OnPre
                 mMediaPlayer.setDataSource(mUrl);
                 mMediaPlayer.prepareAsync();
             } catch (IOException e) {
-                Log.d(TAG, "Error occurred while setting data source");
+                Log.e(TAG, "Error occurred while preparing media player");
             }
         }
         return START_STICKY;
@@ -70,6 +70,30 @@ public class MusicService extends Service implements Playback, MediaPlayer.OnPre
 
     @Override public void seekTo(int position) {
         mMediaPlayer.seekTo(position);
+    }
+
+    @Override public void skipToNext(String url) {
+        mUrl = url;
+        mMediaPlayer.stop();
+        mMediaPlayer.reset();
+        try {
+            mMediaPlayer.setDataSource(mUrl);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Log.e(TAG, "Error occurred while updating data source for next track");
+        }
+    }
+
+    @Override public void skipToPrev(String url) {
+        mUrl = url;
+        mMediaPlayer.stop();
+        mMediaPlayer.reset();
+        try {
+            mMediaPlayer.setDataSource(mUrl);
+            mMediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Log.e(TAG, "Error occurred while updating data source for prev track");
+        }
     }
 
     @Override public void onDestroy() {

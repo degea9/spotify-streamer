@@ -5,4 +5,6 @@ public interface Playback {
     void play();
     void pause();
     void seekTo(int position);
+    void skipToNext(String url);
+    void skipToPrev(String url);
 }
