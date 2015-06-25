@@ -1,6 +1,5 @@
 package com.github.mjhassanpur.spotifystreamer.fragments;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.activities.TopTracksActivity;
 import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
 import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
 import com.google.gson.Gson;
@@ -25,37 +23,37 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import retrofit.RetrofitError;
 
 public class ArtistSearchFragment extends Fragment {
-
-    private RecyclerView mRecyclerView;
-    private View mDefaultMessageView;
+    @InjectView(R.id.artist_recycler_view) RecyclerView mRecyclerView;
+    @InjectView(R.id.message_container) View mDefaultMessageView;
     private ArtistAdapter mArtistAdapter;
     private List<Artist> mArtistList;
-    private Type mArtistListType;
     private Gson mGson;
     private SpotifyService mSpotifyService;
-    private final String KEY_ARTIST = "artist";
     private final String KEY_ARTISTS = "artists";
     private final static String LOG_TAG = "ArtistSearchFragment";
+    private final Type mArtistListType = new TypeToken<List<Artist>>() {}.getType();
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public interface Callback {
+        void onItemSelected(Artist artist);
+    }
+
+    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSpotifyService = new SpotifyApi().getService();
         mGson = new Gson();
-        mArtistListType = new TypeToken<List<Artist>>() {}.getType();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_artist_search, container, false);
-        mDefaultMessageView = rootView.findViewById(R.id.message_container);
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.artist_recycler_view);
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_artist_search, container, false);
+        ButterKnife.inject(this, view);
         setupRecyclerView();
         if (savedInstanceState == null) {
             mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
@@ -67,11 +65,15 @@ public class ArtistSearchFragment extends Fragment {
                 updateArtistAdapter(mArtistList);
             }
         }
-        return rootView;
+        return view;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+    @Override public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, mArtistListType));
     }
@@ -109,21 +111,14 @@ public class ArtistSearchFragment extends Fragment {
     }
 
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
-
-        @Override
-        public void onItemClick(View childView, int position) {
-            Intent intent = new Intent(getActivity(), TopTracksActivity.class);
+        @Override public void onItemClick(View childView, int position) {
             Artist artist = mArtistList.get(position);
-            Type artistType = new TypeToken<Artist>() {}.getType();
-            intent.putExtra(KEY_ARTIST, mGson.toJson(artist, artistType));
-            startActivity(intent);
+            ((Callback) getActivity()).onItemSelected(artist);
         }
     }
 
     private class SearchArtistsTask extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... params) {
+        @Override protected Void doInBackground(String... params) {
             String query = params[0];
             try {
                 mArtistList = mSpotifyService.searchArtists(query).artists.items;
@@ -133,8 +128,7 @@ public class ArtistSearchFragment extends Fragment {
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
+        @Override protected void onPostExecute(Void aVoid) {
             if (!updateArtistAdapter(mArtistList)) {
                 mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
                 showDefaultSearchMessage();
