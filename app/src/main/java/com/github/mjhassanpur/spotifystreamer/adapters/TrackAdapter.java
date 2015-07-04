@@ -14,8 +14,6 @@ import com.github.mjhassanpur.spotifystreamer.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -25,16 +23,19 @@ import kaaes.spotify.webapi.android.models.Track;
  * @see <a href="https://developer.android.com/training/material/lists-cards.html">Creating Lists and Cards</a>
  */
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> {
+
     private Context mContext;
     private ArrayList<Track> mTracks;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        @InjectView(R.id.list_item_album_image) ImageView mAlbumImageView;
-        @InjectView(R.id.list_item_track_name) TextView mTrackTextView;
-        @InjectView(R.id.list_item_album_name) TextView mAlbumTextView;
+        private ImageView mAlbumImageView;
+        private TextView mTrackTextView;
+        private TextView mAlbumTextView;
         public ViewHolder(View v) {
             super(v);
-            ButterKnife.inject(this, v);
+            mAlbumImageView = (ImageView) v.findViewById(R.id.list_item_album_image);
+            mTrackTextView = (TextView) v.findViewById(R.id.list_item_track_name);
+            mAlbumTextView = (TextView) v.findViewById(R.id.list_item_album_name);
         }
     }
 
@@ -42,13 +43,15 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         mTracks = trackList;
     }
 
-    @Override public TrackAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override
+    public TrackAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         View v = LayoutInflater.from(mContext).inflate(R.layout.list_item_track, parent, false);
         return new ViewHolder(v);
     }
 
-    @Override public void onBindViewHolder(ViewHolder holder, int position) {
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Track track = mTracks.get(position);
         holder.mTrackTextView.setText(track.name);
         holder.mAlbumTextView.setText(track.album.name);
@@ -60,7 +63,8 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.ViewHolder> 
         Glide.with(mContext).load(url).error(R.drawable.default_album_image).into(holder.mAlbumImageView);
     }
 
-    @Override public int getItemCount() {
+    @Override
+    public int getItemCount() {
         return mTracks.size();
     }
 }

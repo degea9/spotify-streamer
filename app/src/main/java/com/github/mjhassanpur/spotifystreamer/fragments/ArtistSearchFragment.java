@@ -23,16 +23,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Artist;
 import retrofit.RetrofitError;
 
 public class ArtistSearchFragment extends Fragment {
-    @InjectView(R.id.artist_recycler_view) RecyclerView mRecyclerView;
-    @InjectView(R.id.message_container) View mDefaultMessageView;
+
+    private RecyclerView mRecyclerView;
+    private View mDefaultMessageView;
     private ArtistAdapter mArtistAdapter;
     private List<Artist> mArtistList;
     private Gson mGson;
@@ -45,15 +44,18 @@ public class ArtistSearchFragment extends Fragment {
         void onItemSelected(Artist artist);
     }
 
-    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSpotifyService = new SpotifyApi().getService();
         mGson = new Gson();
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_artist_search, container, false);
-        ButterKnife.inject(this, view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.artist_recycler_view);
+        mDefaultMessageView = view.findViewById(R.id.message_container);
         setupRecyclerView();
         if (savedInstanceState == null) {
             mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
@@ -68,12 +70,8 @@ public class ArtistSearchFragment extends Fragment {
         return view;
     }
 
-    @Override public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
-
-    @Override public void onSaveInstanceState(Bundle outState) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_ARTISTS, mGson.toJson(mArtistList, mArtistListType));
     }
@@ -111,6 +109,7 @@ public class ArtistSearchFragment extends Fragment {
     }
 
     private class OnItemClickListener extends RecyclerItemClickListener.SimpleOnItemClickListener {
+
         @Override public void onItemClick(View childView, int position) {
             Artist artist = mArtistList.get(position);
             ((Callback) getActivity()).onItemSelected(artist);
@@ -118,7 +117,9 @@ public class ArtistSearchFragment extends Fragment {
     }
 
     private class SearchArtistsTask extends AsyncTask<String, Void, Void> {
-        @Override protected Void doInBackground(String... params) {
+
+        @Override
+        protected Void doInBackground(String... params) {
             String query = params[0];
             try {
                 mArtistList = mSpotifyService.searchArtists(query).artists.items;
@@ -128,7 +129,8 @@ public class ArtistSearchFragment extends Fragment {
             return null;
         }
 
-        @Override protected void onPostExecute(Void aVoid) {
+        @Override
+        protected void onPostExecute(Void aVoid) {
             if (!updateArtistAdapter(mArtistList)) {
                 mRecyclerView.setAdapter(new ArtistAdapter(new ArrayList<Artist>()));
                 showDefaultSearchMessage();

@@ -23,22 +23,20 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 import kaaes.spotify.webapi.android.models.ArtistSimple;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class PlayerFragment extends DialogFragment {
-    @InjectView(R.id.seekBar) SeekBar mSeekbar;
-    @InjectView(R.id.album_image) ImageView mAlbumImage;
-    @InjectView(R.id.track_name) TextView mTrackName;
-    @InjectView(R.id.artist_name) TextView mArtistName;
-    @InjectView(R.id.album_name) TextView mAlbumName;
-    @InjectView(R.id.prev) ImageView mPrev;
-    @InjectView(R.id.play_pause) ImageView mPlayPause;
-    @InjectView(R.id.next) ImageView mNext;
+
+    private SeekBar mSeekbar;
+    private ImageView mAlbumImage;
+    private TextView mTrackName;
+    private TextView mArtistName;
+    private TextView mAlbumName;
+    private ImageView mPrev;
+    private ImageView mPlayPause;
+    private ImageView mNext;
     private Track mSelectedTrack;
     private List<Track> mTrackList;
     private Gson mGson;
@@ -49,7 +47,8 @@ public class PlayerFragment extends DialogFragment {
     private final String KEY_TRACKS = "tracks";
     private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
 
-    @Override public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mGson = new Gson();
         String json = null;
@@ -72,11 +71,61 @@ public class PlayerFragment extends DialogFragment {
         }
     }
 
-    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_player, container, false);
-        ButterKnife.inject(this, view);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_player, container, false);
+        mSeekbar = (SeekBar) rootView.findViewById(R.id.seekBar);
+        mAlbumImage = (ImageView) rootView.findViewById(R.id.album_image);
+        mTrackName = (TextView) rootView.findViewById(R.id.track_name);
+        mArtistName = (TextView) rootView.findViewById(R.id.artist_name);
+        mAlbumName = (TextView) rootView.findViewById(R.id.album_name);
+        mPrev = (ImageView) rootView.findViewById(R.id.prev);
+        mPlayPause = (ImageView) rootView.findViewById(R.id.play_pause);
+        mNext = (ImageView) rootView.findViewById(R.id.next);
+
+        mPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mTrackPosition > 0) {
+                    mTrackPosition--;
+                } else {
+                    mTrackPosition = mTrackList.size() - 1;
+                }
+                mSelectedTrack = mTrackList.get(mTrackPosition);
+                mBoundService.skipToPrev(mSelectedTrack.preview_url);
+                setupView();
+            }
+        });
+
+        mPlayPause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mBoundService.isPlaying()) {
+                    mBoundService.pause();
+                    mPlayPause.setImageResource(android.R.drawable.ic_media_play);
+                } else {
+                    mBoundService.play();
+                    mPlayPause.setImageResource(android.R.drawable.ic_media_pause);
+                }
+            }
+        });
+
+        mNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mTrackPosition < mTrackList.size() - 1) {
+                    mTrackPosition++;
+                } else {
+                    mTrackPosition = 0;
+                }
+                mSelectedTrack = mTrackList.get(mTrackPosition);
+                mBoundService.skipToNext(mSelectedTrack.preview_url);
+                setupView();
+            }
+        });
+
         setupView();
-        return view;
+        return rootView;
     }
 
     private void setupView() {
@@ -101,44 +150,8 @@ public class PlayerFragment extends DialogFragment {
         outState.putString(KEY_TRACKS, mGson.toJson(mTrackList, mTrackListType));
     }
 
-    @OnClick(R.id.play_pause) public void playPause() {
-        if (mBoundService.isPlaying()) {
-            mBoundService.pause();
-            mPlayPause.setImageResource(android.R.drawable.ic_media_play);
-        } else {
-            mBoundService.play();
-            mPlayPause.setImageResource(android.R.drawable.ic_media_pause);
-        }
-    }
-
-    @OnClick(R.id.next) public void skipToNext() {
-        if (mTrackPosition < mTrackList.size() - 1) {
-            mTrackPosition++;
-        } else {
-            mTrackPosition = 0;
-        }
-        mSelectedTrack = mTrackList.get(mTrackPosition);
-        mBoundService.skipToNext(mSelectedTrack.preview_url);
-        setupView();
-    }
-
-    @OnClick(R.id.prev) public void skipToPrev() {
-        if (mTrackPosition > 0) {
-            mTrackPosition--;
-        } else {
-            mTrackPosition = mTrackList.size() - 1;
-        }
-        mSelectedTrack = mTrackList.get(mTrackPosition);
-        mBoundService.skipToPrev(mSelectedTrack.preview_url);
-        setupView();
-    }
-
-    @Override public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.reset(this);
-    }
-
-    @Override public void onActivityCreated(Bundle savedInstanceState) {
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Intent intent = new Intent(getActivity(), MusicService.class);
         intent.setAction(MusicService.ACTION_PLAY);
@@ -147,7 +160,8 @@ public class PlayerFragment extends DialogFragment {
         doBindService();
     }
 
-    @Override public void onDestroy() {
+    @Override
+    public void onDestroy() {
         super.onDestroy();
         getActivity().stopService(new Intent(getActivity(), MusicService.class));
         doUnbindService();
@@ -167,6 +181,7 @@ public class PlayerFragment extends DialogFragment {
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
+
         public void onServiceConnected(ComponentName className, IBinder service) {
             mBoundService = ((MusicService.MusicBinder)service).getService();
         }

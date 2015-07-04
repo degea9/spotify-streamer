@@ -29,6 +29,7 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class ArtistSearchActivity extends AppCompatActivity implements ArtistSearchFragment.Callback,
         TopTracksFragment.Callback {
+
     private String mQuery;
     private MenuItem mSearchItem;
     private SearchView mSearchView;
@@ -43,7 +44,8 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
     private boolean mTwoPane;
     private boolean mRetainTopTracks;
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_search);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,14 +65,16 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         }
     }
 
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_artist_search, menu);
         mSearchItem = menu.findItem(R.id.action_search);
         setupSearchView();
         return true;
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             Toast.makeText(this, "Settings coming soon...", Toast.LENGTH_SHORT).show();
             return true;
@@ -78,17 +82,20 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         return super.onOptionsItemSelected(item);
     }
 
-    @Override public void onSaveInstanceState(Bundle outState) {
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(KEY_QUERY, mQuery);
     }
 
-    @Override protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mQuery = savedInstanceState.getString(KEY_QUERY);
     }
 
-    @Override public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         if (mSearchItem.isActionViewExpanded()) {
             mSearchItem.collapseActionView();
         } else {
@@ -96,7 +103,8 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         }
     }
 
-    @Override protected void onNewIntent(Intent intent) {
+    @Override
+    protected void onNewIntent(Intent intent) {
         setIntent(intent);
         handleIntent(intent);
     }
@@ -144,16 +152,19 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
      * @see <a href="http://stackoverflow.com/questions/10900348/edittext-textchangelistener">EditText & TextChangeListener</a>
      */
     private class SearchViewTextListener implements SearchView.OnQueryTextListener {
+
         private Handler handler = new Handler();
         private Runnable delayedAction = null;
         private final int DELAY_IN_MILLISECONDS = 300;
 
-        @Override public boolean onQueryTextSubmit(String query) {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
             mSearchView.clearFocus();
             return false;
         }
 
-        @Override public boolean onQueryTextChange(final String newText) {
+        @Override
+        public boolean onQueryTextChange(final String newText) {
             if (mSearchFragment == null) {
                 return false;
             }
@@ -198,7 +209,8 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
                 .commit();
     }
 
-    @Override public void onItemSelected(Artist artist) {
+    @Override
+    public void onItemSelected(Artist artist) {
         Gson gson = new Gson();
         if (mTwoPane) {
             Bundle args = new Bundle();
@@ -213,7 +225,8 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         }
     }
 
-    @Override public void onItemSelected(List<Track> tracks, int position) {
+    @Override
+    public void onItemSelected(List<Track> tracks, int position) {
         Gson gson = new Gson();
         FragmentManager fm = getSupportFragmentManager();
         if (mTwoPane) {

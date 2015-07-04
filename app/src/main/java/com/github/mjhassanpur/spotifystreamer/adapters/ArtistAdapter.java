@@ -14,8 +14,6 @@ import com.github.mjhassanpur.spotifystreamer.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Image;
 
@@ -25,15 +23,17 @@ import kaaes.spotify.webapi.android.models.Image;
  * @see <a href="https://developer.android.com/training/material/lists-cards.html">Creating Lists and Cards</a>
  */
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
+
     private Context mContext;
     private ArrayList<Artist> mArtists;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        @InjectView(R.id.list_item_artist_image) ImageView mImageView;
-        @InjectView(R.id.list_item_artist_name) TextView mTextView;
+        private ImageView mImageView;
+        private TextView mTextView;
         public ViewHolder(View v) {
             super(v);
-            ButterKnife.inject(this, v);
+            mImageView = (ImageView) v.findViewById(R.id.list_item_artist_image);
+            mTextView = (TextView) v.findViewById(R.id.list_item_artist_name);
         }
     }
 
@@ -48,7 +48,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         return new ViewHolder(v);
     }
 
-    @Override public void onBindViewHolder(ViewHolder holder, int position) {
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Artist artist = mArtists.get(position);
         holder.mTextView.setText(artist.name);
         String url = null;
@@ -59,7 +60,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         Glide.with(mContext).load(url).error(R.drawable.default_profile_image).into(holder.mImageView);
     }
 
-    @Override public int getItemCount() {
+    @Override
+    public int getItemCount() {
         return mArtists.size();
     }
 }

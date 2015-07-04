@@ -20,11 +20,13 @@ import java.util.List;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class TopTracksActivity extends AppCompatActivity implements TopTracksFragment.Callback {
+
     private final String KEY_TRACKS = "tracks";
     private final String KEY_SELECTED_TRACK = "selectedTrack";
     private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
 
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_top_tracks);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -40,12 +42,14 @@ public class TopTracksActivity extends AppCompatActivity implements TopTracksFra
         }
     }
 
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_top_tracks, menu);
         return true;
     }
 
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             Toast.makeText(this, "Settings coming soon...", Toast.LENGTH_SHORT).show();
             return true;
@@ -53,7 +57,8 @@ public class TopTracksActivity extends AppCompatActivity implements TopTracksFra
         return super.onOptionsItemSelected(item);
     }
 
-    @Override public void onItemSelected(List<Track> tracks, int position) {
+    @Override
+    public void onItemSelected(List<Track> tracks, int position) {
         Gson gson = new Gson();
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
