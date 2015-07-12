@@ -238,7 +238,6 @@ public class PlayerFragment extends DialogFragment {
         super.onDestroy();
         stopSeekbarUpdate();
         mExecutorService.shutdown();
-        getActivity().stopService(new Intent(getActivity(), MusicService.class));
     }
 
     @Override

@@ -39,7 +39,8 @@ public class MediaProvider {
 
     public static final String CUSTOM_METADATA_TRACK_SOURCE = "__SOURCE__";
 
-    private final Map<String, MediaMetadataCompat> mMusicListById;
+    private Map<String, MediaMetadataCompat> mMusicListById;
+    private List<Track> mMusicList;
 
     enum State {
         NON_INITIALIZED, INITIALIZED
@@ -68,16 +69,26 @@ public class MediaProvider {
     }
 
     public void setMusicList(List<Track> tracks) {
-        if (mCurrentState == State.NON_INITIALIZED) {
-            if (tracks != null) {
-                for (int i = 0, n = tracks.size(); i < n; i++) {
-                    MediaMetadataCompat item = build(tracks.get(i));
-                    String musicId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
-                    mMusicListById.put(musicId, item);
-                }
+        if (tracks != null) {
+            if (!hasMusicListChanged(tracks, mMusicList))
+                return;
+            mMusicList = tracks;
+            mMusicListById.clear();
+            for (int i = 0, n = tracks.size(); i < n; i++) {
+                MediaMetadataCompat item = build(tracks.get(i));
+                String mediaId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
+                mMusicListById.put(mediaId, item);
             }
             mCurrentState = State.INITIALIZED;
         }
+    }
+
+    private boolean hasMusicListChanged(List<Track> arg0, List<Track> arg1) {
+        if (arg0 != null && !arg0.isEmpty() && arg1 != null && !arg1.isEmpty()) {
+            if (arg0.get(0).id.equals(arg1.get(0).id))
+                return false;
+        }
+        return true;
     }
 
     private MediaMetadataCompat build(Track track) {

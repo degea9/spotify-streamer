@@ -242,7 +242,6 @@ public class MediaNotificationManager extends BroadcastReceiver {
         }
 
         final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mService);
-        int playPauseButtonPosition = 1;
 
         notificationBuilder.addAction(android.R.drawable.ic_media_previous,
                 mService.getString(R.string.media_label_prev), mPreviousIntent);
@@ -257,7 +256,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
         notificationBuilder
                 .setStyle(new NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(
-                                new int[]{playPauseButtonPosition})  // show only play/pause in compact view
+                                new int[]{0, 1, 2}) // show all actions in compact view
                         .setMediaSession(mSessionToken))
                 .setColor(mNotificationColor)
                 .setSmallIcon(android.R.drawable.ic_media_play)

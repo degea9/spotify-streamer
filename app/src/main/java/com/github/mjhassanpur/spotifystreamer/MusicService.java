@@ -143,20 +143,23 @@ public class MusicService extends Service implements Playback.Callback {
         if (startIntent != null) {
             String action = startIntent.getAction();
 
+            boolean resumeCurrentTrack = false;
             int trackPosition = startIntent.getIntExtra(PlayerFragment.KEY_SELECTED_TRACK, 0);
             String json = startIntent.getStringExtra(PlayerFragment.KEY_TRACKS);
-            if (json != null) {
+            if (json != null && !json.equals("null")) {
                 final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
                 List<Track> tracks = new Gson().fromJson(json, mTrackListType);
                 Track track = tracks.get(trackPosition);
                 mMediaProvider.setMusicList(tracks);
                 mPlayingQueue = QueueHelper.getPlayingQueue(mMediaProvider);
                 mCurrentIndexOnQueue = QueueHelper.getMediaIndexOnQueue(mPlayingQueue, track.id);
+            } else {
+                resumeCurrentTrack = true;
             }
 
             String command = startIntent.getStringExtra(CMD_NAME);
             if (ACTION_CMD.equals(action)) {
-                if (CMD_PLAY.equals(command)) {
+                if (CMD_PLAY.equals(command) && !resumeCurrentTrack) {
                     handlePlayRequest();
                 } else if (CMD_PAUSE.equals(command)) {
                     if (mPlayback != null && mPlayback.isPlaying()) {
