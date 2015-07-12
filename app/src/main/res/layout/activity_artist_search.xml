@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.github.mjhassanpur.spotifystreamer.activities.ArtistSearchActivity">
+    tools:context="com.github.mjhassanpur.spotifystreamer.ui.ArtistSearchActivity">
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.github.mjhassanpur.spotifystreamer.fragments.ArtistSearchFragment"
+        android:name="com.github.mjhassanpur.spotifystreamer.ui.ArtistSearchFragment"
         android:id="@+id/fragment_artist_search" />
 
 </LinearLayout>

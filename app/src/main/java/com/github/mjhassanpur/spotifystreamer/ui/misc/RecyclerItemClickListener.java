@@ -1,4 +1,4 @@
-package com.github.mjhassanpur.spotifystreamer.listeners;
+package com.github.mjhassanpur.spotifystreamer.ui.misc;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

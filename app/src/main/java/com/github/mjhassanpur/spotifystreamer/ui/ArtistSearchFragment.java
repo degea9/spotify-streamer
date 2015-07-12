@@ -1,4 +1,4 @@
-package com.github.mjhassanpur.spotifystreamer.fragments;
+package com.github.mjhassanpur.spotifystreamer.ui;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,10 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.github.mjhassanpur.spotifystreamer.DividerItemDecoration;
+import com.github.mjhassanpur.spotifystreamer.ui.misc.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.adapters.ArtistAdapter;
-import com.github.mjhassanpur.spotifystreamer.listeners.RecyclerItemClickListener;
+import com.github.mjhassanpur.spotifystreamer.ui.adapters.ArtistAdapter;
+import com.github.mjhassanpur.spotifystreamer.ui.misc.RecyclerItemClickListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

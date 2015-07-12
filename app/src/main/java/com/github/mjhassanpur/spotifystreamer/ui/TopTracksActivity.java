@@ -1,4 +1,4 @@
-package com.github.mjhassanpur.spotifystreamer.activities;
+package com.github.mjhassanpur.spotifystreamer.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.fragments.TopTracksFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

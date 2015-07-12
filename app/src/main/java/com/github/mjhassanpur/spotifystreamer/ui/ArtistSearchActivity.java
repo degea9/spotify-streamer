@@ -1,4 +1,4 @@
-package com.github.mjhassanpur.spotifystreamer.activities;
+package com.github.mjhassanpur.spotifystreamer.ui;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -15,9 +15,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.fragments.ArtistSearchFragment;
-import com.github.mjhassanpur.spotifystreamer.fragments.PlayerFragment;
-import com.github.mjhassanpur.spotifystreamer.fragments.TopTracksFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

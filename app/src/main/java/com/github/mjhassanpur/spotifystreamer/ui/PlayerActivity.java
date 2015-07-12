@@ -1,4 +1,4 @@
-package com.github.mjhassanpur.spotifystreamer.activities;
+package com.github.mjhassanpur.spotifystreamer.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.github.mjhassanpur.spotifystreamer.R;
-import com.github.mjhassanpur.spotifystreamer.fragments.PlayerFragment;
 
 public class PlayerActivity extends AppCompatActivity {
 

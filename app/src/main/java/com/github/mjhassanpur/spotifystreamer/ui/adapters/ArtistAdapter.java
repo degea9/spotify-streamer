@@ -1,4 +1,4 @@
-package com.github.mjhassanpur.spotifystreamer.adapters;
+package com.github.mjhassanpur.spotifystreamer.ui.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

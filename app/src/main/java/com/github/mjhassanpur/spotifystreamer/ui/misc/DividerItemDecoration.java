@@ -1,4 +1,4 @@
-package com.github.mjhassanpur.spotifystreamer;
+package com.github.mjhassanpur.spotifystreamer.ui.misc;
 
 import android.content.Context;
 import android.content.res.TypedArray;
