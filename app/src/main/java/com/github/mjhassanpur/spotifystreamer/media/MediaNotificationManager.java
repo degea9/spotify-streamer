@@ -243,12 +243,12 @@ public class MediaNotificationManager extends BroadcastReceiver {
 
         final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mService);
 
-        notificationBuilder.addAction(android.R.drawable.ic_media_previous,
+        notificationBuilder.addAction(R.drawable.ic_skip_previous_white_24dp,
                 mService.getString(R.string.media_label_prev), mPreviousIntent);
 
         addPlayPauseAction(notificationBuilder);
 
-        notificationBuilder.addAction(android.R.drawable.ic_media_next,
+        notificationBuilder.addAction(R.drawable.ic_skip_next_white_24dp,
                 mService.getString(R.string.media_label_next), mNextIntent);
 
         Bitmap albumArt = BitmapFactory.decodeResource(mService.getResources(), R.drawable.ic_launcher);
@@ -259,7 +259,7 @@ public class MediaNotificationManager extends BroadcastReceiver {
                                 new int[]{0, 1, 2}) // show all actions in compact view
                         .setMediaSession(mSessionToken))
                 .setColor(mNotificationColor)
-                .setSmallIcon(android.R.drawable.ic_media_play)
+                .setSmallIcon(R.drawable.ic_play_arrow_white_24dp)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setUsesChronometer(true)
                 .setContentIntent(createContentIntent())
@@ -293,11 +293,11 @@ public class MediaNotificationManager extends BroadcastReceiver {
         PendingIntent intent;
         if (mPlaybackState.getState() == PlaybackStateCompat.STATE_PLAYING) {
             label = mService.getString(R.string.media_label_pause);
-            icon = android.R.drawable.ic_media_pause;
+            icon = R.drawable.ic_pause_white_24dp;
             intent = mPauseIntent;
         } else {
             label = mService.getString(R.string.media_label_play);
-            icon = android.R.drawable.ic_media_play;
+            icon = R.drawable.ic_play_arrow_white_24dp;
             intent = mPlayIntent;
         }
         builder.addAction(new NotificationCompat.Action(icon, label, intent));

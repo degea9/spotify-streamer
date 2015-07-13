@@ -301,18 +301,18 @@ public class PlayerFragment extends DialogFragment {
         switch (state.getState()) {
             case PlaybackStateCompat.STATE_PLAYING:
                 mPlayPause.setVisibility(VISIBLE);
-                mPlayPause.setImageResource(android.R.drawable.ic_media_pause);
+                mPlayPause.setImageResource(R.drawable.ic_pause_primary_dark_48dp);
                 scheduleSeekbarUpdate();
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 mPlayPause.setVisibility(VISIBLE);
-                mPlayPause.setImageResource(android.R.drawable.ic_media_play);
+                mPlayPause.setImageResource(R.drawable.ic_play_arrow_primary_dark_48dp);
                 stopSeekbarUpdate();
                 break;
             case PlaybackStateCompat.STATE_NONE:
             case PlaybackStateCompat.STATE_STOPPED:
                 mPlayPause.setVisibility(VISIBLE);
-                mPlayPause.setImageResource(android.R.drawable.ic_media_play);
+                mPlayPause.setImageResource(R.drawable.ic_play_arrow_primary_dark_48dp);
                 stopSeekbarUpdate();
                 break;
             case PlaybackStateCompat.STATE_BUFFERING:
