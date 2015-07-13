@@ -151,7 +151,8 @@ public class MusicService extends Service implements Playback.Callback {
                 final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
                 List<Track> tracks = new Gson().fromJson(json, mTrackListType);
                 if (mMediaProvider.isEqual(tracks, mTracks) && mCurrentIndexOnQueue != -1) {
-                    int indexOnQueue = QueueHelper.getMediaIndexOnQueue(mPlayingQueue, tracks.get(trackPosition).id);
+                    int indexOnQueue =
+                            QueueHelper.getMediaIndexOnQueue(mPlayingQueue, tracks.get(trackPosition).id);
                     if (mCurrentIndexOnQueue == indexOnQueue) {
                         // Resumes current track when selected from top tracks list
                         resumeCurrentTrack = true;
@@ -160,10 +161,10 @@ public class MusicService extends Service implements Playback.Callback {
                     }
                 } else {
                     mTracks = tracks;
-                    Track track = tracks.get(trackPosition);
                     mMediaProvider.setMusicList(tracks);
                     mPlayingQueue = QueueHelper.getPlayingQueue(mMediaProvider);
-                    mCurrentIndexOnQueue = QueueHelper.getMediaIndexOnQueue(mPlayingQueue, track.id);
+                    mCurrentIndexOnQueue =
+                            QueueHelper.getMediaIndexOnQueue(mPlayingQueue, tracks.get(trackPosition).id);
                 }
             } else {
                 // Resumes current track when player UI is launched from notification

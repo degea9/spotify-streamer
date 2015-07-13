@@ -40,6 +40,7 @@ public class MediaProvider {
     public static final String CUSTOM_METADATA_TRACK_SOURCE = "__SOURCE__";
 
     private Map<String, MediaMetadataCompat> mMusicListById;
+    private final Map<Integer, String> mMusicListOrder;
     private List<Track> mMusicList;
 
     enum State {
@@ -50,6 +51,7 @@ public class MediaProvider {
 
     public MediaProvider() {
         mMusicListById = new HashMap<>();
+        mMusicListOrder = new HashMap<>();
     }
 
     /**
@@ -65,7 +67,16 @@ public class MediaProvider {
         if (mCurrentState != State.INITIALIZED) {
             return Collections.emptyList();
         }
-        return new ArrayList<>(mMusicListById.values());
+        return getSortedMusicList();
+    }
+
+    private ArrayList<MediaMetadataCompat> getSortedMusicList() {
+        ArrayList<MediaMetadataCompat> sortedMusicList = new ArrayList<>();
+        for (int i = 0, n = mMusicList.size(); i < n; i++) {
+            String mediaId = mMusicListOrder.get(i);
+            sortedMusicList.add(mMusicListById.get(mediaId));
+        }
+        return sortedMusicList;
     }
 
     public void setMusicList(List<Track> tracks) {
@@ -74,10 +85,12 @@ public class MediaProvider {
                 return;
             mMusicList = tracks;
             mMusicListById.clear();
+            mMusicListOrder.clear();
             for (int i = 0, n = tracks.size(); i < n; i++) {
                 MediaMetadataCompat item = build(tracks.get(i));
                 String mediaId = item.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID);
                 mMusicListById.put(mediaId, item);
+                mMusicListOrder.put(i, mediaId);
             }
             mCurrentState = State.INITIALIZED;
         }
