@@ -70,7 +70,7 @@ public class MediaProvider {
 
     public void setMusicList(List<Track> tracks) {
         if (tracks != null) {
-            if (!hasMusicListChanged(tracks, mMusicList))
+            if (isEqual(tracks, mMusicList))
                 return;
             mMusicList = tracks;
             mMusicListById.clear();
@@ -83,12 +83,12 @@ public class MediaProvider {
         }
     }
 
-    private boolean hasMusicListChanged(List<Track> arg0, List<Track> arg1) {
+    public boolean isEqual(List<Track> arg0, List<Track> arg1) {
         if (arg0 != null && !arg0.isEmpty() && arg1 != null && !arg1.isEmpty()) {
             if (arg0.get(0).id.equals(arg1.get(0).id))
-                return false;
+                return true;
         }
-        return true;
+        return false;
     }
 
     private MediaMetadataCompat build(Track track) {

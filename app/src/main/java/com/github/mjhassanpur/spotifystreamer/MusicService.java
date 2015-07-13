@@ -80,8 +80,9 @@ public class MusicService extends Service implements Playback.Callback {
     private MediaSessionCompat mSession;
     private MediaSessionCompat.Token mSessionToken;
     private List<MediaSessionCompat.QueueItem> mPlayingQueue;
-    private int mCurrentIndexOnQueue;
+    private int mCurrentIndexOnQueue = -1;
     private MediaPlayback mPlayback;
+    private List<Track> mTracks;
 
     private MediaNotificationManager mMediaNotificationManager;
 
@@ -144,16 +145,28 @@ public class MusicService extends Service implements Playback.Callback {
             String action = startIntent.getAction();
 
             boolean resumeCurrentTrack = false;
-            int trackPosition = startIntent.getIntExtra(PlayerFragment.KEY_SELECTED_TRACK, 0);
+            int trackPosition = startIntent.getIntExtra(PlayerFragment.KEY_SELECTED_TRACK, -1);
             String json = startIntent.getStringExtra(PlayerFragment.KEY_TRACKS);
             if (json != null && !json.equals("null")) {
                 final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
                 List<Track> tracks = new Gson().fromJson(json, mTrackListType);
-                Track track = tracks.get(trackPosition);
-                mMediaProvider.setMusicList(tracks);
-                mPlayingQueue = QueueHelper.getPlayingQueue(mMediaProvider);
-                mCurrentIndexOnQueue = QueueHelper.getMediaIndexOnQueue(mPlayingQueue, track.id);
+                if (mMediaProvider.isEqual(tracks, mTracks) && mCurrentIndexOnQueue != -1) {
+                    int indexOnQueue = QueueHelper.getMediaIndexOnQueue(mPlayingQueue, tracks.get(trackPosition).id);
+                    if (mCurrentIndexOnQueue == indexOnQueue) {
+                        // Resumes current track when selected from top tracks list
+                        resumeCurrentTrack = true;
+                    } else {
+                        mCurrentIndexOnQueue = indexOnQueue;
+                    }
+                } else {
+                    mTracks = tracks;
+                    Track track = tracks.get(trackPosition);
+                    mMediaProvider.setMusicList(tracks);
+                    mPlayingQueue = QueueHelper.getPlayingQueue(mMediaProvider);
+                    mCurrentIndexOnQueue = QueueHelper.getMediaIndexOnQueue(mPlayingQueue, track.id);
+                }
             } else {
+                // Resumes current track when player UI is launched from notification
                 resumeCurrentTrack = true;
             }
 
