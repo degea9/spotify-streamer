@@ -55,7 +55,7 @@ import kaaes.spotify.webapi.android.models.Track;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class PlayerFragment extends DialogFragment {
+public class PlayerFragment extends DialogFragment implements MusicService.Callback {
 
     private static final String TAG = LogHelper.makeLogTag(PlayerActivity.class);
 
@@ -133,7 +133,7 @@ public class PlayerFragment extends DialogFragment {
             mTrackPosition = savedInstanceState.getInt(KEY_SELECTED_TRACK);
             json = savedInstanceState.getString(KEY_TRACKS);
         }
-        if (json != null) {
+        if (json != null && !json.equals("null")) {
             mTrackList = mGson.fromJson(json, mTrackListType);
             mSelectedTrack = mTrackList.get(mTrackPosition);
         }
@@ -341,6 +341,15 @@ public class PlayerFragment extends DialogFragment {
         mSeekbar.setProgress((int) currentPosition);
     }
 
+    @Override
+    public void onTrackChange(int position) {
+        mTrackPosition = position;
+    }
+
+    private void registerCallback(MusicService boundService) {
+        boundService.registerCallback(this);
+    }
+
     void doBindService() {
         getActivity().bindService(
                 new Intent(getActivity(), MusicService.class), mConnection, Context.BIND_AUTO_CREATE);
@@ -361,6 +370,7 @@ public class PlayerFragment extends DialogFragment {
             try {
                 mMediaController = new MediaControllerCompat(getActivity(), mBoundService.getSessionToken());
                 mMediaController.registerCallback(mCallback);
+                registerCallback(mBoundService);
                 PlaybackStateCompat state = mMediaController.getPlaybackState();
                 updatePlaybackState(state);
                 MediaMetadataCompat metadata = mMediaController.getMetadata();
@@ -379,6 +389,7 @@ public class PlayerFragment extends DialogFragment {
         }
 
         public void onServiceDisconnected(ComponentName className) {
+            mBoundService.unregisterCallback();
             mBoundService = null;
         }
     };

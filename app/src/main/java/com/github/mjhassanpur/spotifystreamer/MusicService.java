@@ -83,6 +83,7 @@ public class MusicService extends Service implements Playback.Callback {
     private int mCurrentIndexOnQueue = -1;
     private MediaPlayback mPlayback;
     private List<Track> mTracks;
+    private Callback mCallback;
 
     private MediaNotificationManager mMediaNotificationManager;
 
@@ -268,6 +269,8 @@ public class MusicService extends Service implements Playback.Callback {
             if (mPlayingQueue != null && mCurrentIndexOnQueue >= mPlayingQueue.size()) {
                 mCurrentIndexOnQueue = 0;
             }
+            if (mCallback != null)
+                mCallback.onTrackChange(mCurrentIndexOnQueue);
             if (QueueHelper.isIndexPlayable(mCurrentIndexOnQueue, mPlayingQueue)) {
                 handlePlayRequest();
             } else {
@@ -285,6 +288,8 @@ public class MusicService extends Service implements Playback.Callback {
             if (mPlayingQueue != null && mCurrentIndexOnQueue < 0) {
                 mCurrentIndexOnQueue = 0;
             }
+            if (mCallback != null)
+                mCallback.onTrackChange(mCurrentIndexOnQueue);
             if (QueueHelper.isIndexPlayable(mCurrentIndexOnQueue, mPlayingQueue)) {
                 handlePlayRequest();
             } else {
@@ -426,6 +431,8 @@ public class MusicService extends Service implements Playback.Callback {
             if (mCurrentIndexOnQueue >= mPlayingQueue.size()) {
                 mCurrentIndexOnQueue = 0;
             }
+            if (mCallback != null)
+                mCallback.onTrackChange(mCurrentIndexOnQueue);
             handlePlayRequest();
         } else {
             // If there is nothing to play, we stop and release the resources:
@@ -453,6 +460,18 @@ public class MusicService extends Service implements Playback.Callback {
             mPlayingQueue = queue;
             updateMetadata();
         }
+    }
+
+    public interface Callback {
+        void onTrackChange(int position);
+    }
+
+    public void registerCallback(Callback cb) {
+        mCallback = cb;
+    }
+
+    public void unregisterCallback() {
+        mCallback = null;
     }
 
     public class MusicBinder extends Binder {
