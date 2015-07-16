@@ -16,6 +16,7 @@ import com.github.mjhassanpur.spotifystreamer.ui.misc.DividerItemDecoration;
 import com.github.mjhassanpur.spotifystreamer.R;
 import com.github.mjhassanpur.spotifystreamer.ui.adapters.TrackAdapter;
 import com.github.mjhassanpur.spotifystreamer.ui.misc.RecyclerItemClickListener;
+import com.github.mjhassanpur.spotifystreamer.utils.PreferenceHelper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -122,10 +123,18 @@ public class TopTracksFragment extends Fragment {
 
     public class FetchTopTracksTask extends AsyncTask<Void, Void, Void> {
 
+        private String mCountry;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mCountry = PreferenceHelper.getCountry(getActivity());
+        }
+
         @Override
         protected Void doInBackground(Void... params) {
             Map<String,Object> options = new HashMap<>();
-            options.put("country", "US");
+            options.put("country", mCountry);
             try {
                 mTrackList = mSpotifyService.getArtistTopTrack(mArtist.id, options).tracks;
             } catch (RetrofitError e) {

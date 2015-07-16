@@ -7,11 +7,23 @@
     <string name="title_activity_artist_search">Search</string>
     <string name="title_activity_top_tracks">Top Tracks</string>
     <string name="title_activity_player">PlayerActivity</string>
+    <string name="title_activity_settings">Settings</string>
     <string name="default_search_message_title">Find your favorite artists</string>
 
     <string name="media_label_play">Play</string>
     <string name="media_label_pause">Pause</string>
     <string name="media_label_prev">Prev</string>
     <string name="media_label_next">Next</string>
+
+    <string name="pref_country_default">US</string>
+
+    <string name="pref_title_notifications">Notifications</string>
+    <string name="pref_title_country">Country</string>
+
+    <string name="pref_key_notifications">notifications</string>
+    <string name="pref_key_country">country</string>
+
+    <string name="pref_description_notifications_enabled">On</string>
+    <string name="pref_description_notifications_disabled">Off</string>
 
 </resources>

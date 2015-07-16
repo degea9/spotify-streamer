@@ -39,6 +39,7 @@ import com.github.mjhassanpur.spotifystreamer.media.Playback;
 import com.github.mjhassanpur.spotifystreamer.ui.PlayerActivity;
 import com.github.mjhassanpur.spotifystreamer.ui.PlayerFragment;
 import com.github.mjhassanpur.spotifystreamer.utils.LogHelper;
+import com.github.mjhassanpur.spotifystreamer.utils.PreferenceHelper;
 import com.github.mjhassanpur.spotifystreamer.utils.QueueHelper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -137,7 +138,9 @@ public class MusicService extends Service implements Playback.Callback {
 
         updatePlaybackState(null);
 
-        mMediaNotificationManager = new MediaNotificationManager(this);
+        if (PreferenceHelper.isNotificationsEnabled(this)) {
+            mMediaNotificationManager = new MediaNotificationManager(this);
+        }
     }
 
     @Override
@@ -400,7 +403,8 @@ public class MusicService extends Service implements Playback.Callback {
 
         mSession.setPlaybackState(stateBuilder.build());
 
-        if (state == PlaybackStateCompat.STATE_PLAYING || state == PlaybackStateCompat.STATE_PAUSED) {
+        if ((state == PlaybackStateCompat.STATE_PLAYING || state == PlaybackStateCompat.STATE_PAUSED)
+                && mMediaNotificationManager != null) {
             mMediaNotificationManager.startNotification();
         }
     }
