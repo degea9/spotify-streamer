@@ -9,4 +9,11 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+
+    <item android:id="@+id/action_share"
+        android:title="Share"
+        android:icon="@drawable/ic_pause_white_48dp"
+        android:orderInCategory="99"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -30,6 +30,8 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -37,9 +39,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.github.mjhassanpur.spotifystreamer.utils.LogHelper;
-import com.github.mjhassanpur.spotifystreamer.R;
 import com.github.mjhassanpur.spotifystreamer.MusicService;
+import com.github.mjhassanpur.spotifystreamer.R;
+import com.github.mjhassanpur.spotifystreamer.utils.LogHelper;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -137,6 +139,9 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
             mTrackList = mGson.fromJson(json, mTrackListType);
             mSelectedTrack = mTrackList.get(mTrackPosition);
         }
+        if (!getResources().getBoolean(R.bool.twoPane)) {
+            setHasOptionsMenu(true);
+        }
     }
 
     @Override
@@ -207,6 +212,25 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_share).setVisible(true);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_share) {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            String url = mTrackList.get(mTrackPosition).external_urls.get("spotify");
+            i.putExtra(Intent.EXTRA_TEXT, url);
+            startActivity(Intent.createChooser(i, "Share Track"));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
