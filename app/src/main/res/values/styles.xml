@@ -9,4 +9,10 @@
         <item name="colorAccent">#FFFFFF</item>
     </style>
 
+    <style name="BaseThemeDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">#00D06D</item>
+        <item name="colorPrimaryDark">#00A657</item>
+        <item name="colorAccent">#FFFFFF</item>
+    </style>
+
 </resources>

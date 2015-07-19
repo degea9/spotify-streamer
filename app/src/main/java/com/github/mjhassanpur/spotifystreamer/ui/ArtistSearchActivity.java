@@ -225,19 +225,9 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
     @Override
     public void onItemSelected(List<Track> tracks, int position) {
         Gson gson = new Gson();
-        FragmentManager fm = getSupportFragmentManager();
-        if (mTwoPane) {
-            Bundle args = new Bundle();
-            args.putString(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
-            args.putInt(KEY_SELECTED_TRACK, position);
-            PlayerFragment fragment = new PlayerFragment();
-            fragment.setArguments(args);
-            fragment.show(fm, "dialog");
-        } else {
-            Intent intent = new Intent(this, PlayerActivity.class);
-            intent.putExtra(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
-            intent.putExtra(KEY_SELECTED_TRACK, position);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
+        intent.putExtra(KEY_SELECTED_TRACK, position);
+        startActivity(intent);
     }
 }

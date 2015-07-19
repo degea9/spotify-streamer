@@ -14,6 +14,9 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (getResources().getBoolean(R.bool.twoPane)) {
+            setTheme(R.style.BaseThemeDialog);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
