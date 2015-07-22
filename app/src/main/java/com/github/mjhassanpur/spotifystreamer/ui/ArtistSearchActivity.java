@@ -1,10 +1,13 @@
 package com.github.mjhassanpur.spotifystreamer.ui;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -13,6 +16,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.github.mjhassanpur.spotifystreamer.MusicService;
 import com.github.mjhassanpur.spotifystreamer.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -24,7 +28,7 @@ import kaaes.spotify.webapi.android.models.Artist;
 import kaaes.spotify.webapi.android.models.Track;
 
 public class ArtistSearchActivity extends AppCompatActivity implements ArtistSearchFragment.Callback,
-        TopTracksFragment.Callback {
+        TopTracksFragment.Callback, MusicService.Callback {
 
     private String mQuery;
     private MenuItem mSearchItem;
@@ -39,6 +43,12 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
     private final Type mTrackListType = new TypeToken<List<Track>>() {}.getType();
     private boolean mTwoPane;
     private boolean mRetainTopTracks;
+    private MusicService mBoundService;
+    private boolean mIsBound = false;
+    private int mTrackPosition;
+    private List<Track> mTracks;
+    private boolean mServiceStarted = false;
+    private MenuItem mPlayingItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +75,7 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_artist_search, menu);
         mSearchItem = menu.findItem(R.id.action_search);
+        mPlayingItem = menu.findItem(R.id.action_playing);
         setupSearchView();
         return true;
     }
@@ -89,6 +100,18 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mQuery = savedInstanceState.getString(KEY_QUERY);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        doBindService();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        doUnbindService();
     }
 
     @Override
@@ -224,10 +247,60 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
 
     @Override
     public void onItemSelected(List<Track> tracks, int position) {
+        mTracks = tracks;
+        mTrackPosition = position;
         Gson gson = new Gson();
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra(KEY_TRACKS, gson.toJson(tracks, mTrackListType));
         intent.putExtra(KEY_SELECTED_TRACK, position);
         startActivity(intent);
     }
+
+    @Override
+    public void onTrackChange(int position) {
+        mTrackPosition = position;
+    }
+
+    @Override
+    public void onServiceStateChange(boolean started) {
+        mServiceStarted = started;
+        if (mServiceStarted) {
+            mPlayingItem.setVisible(true);
+        } else {
+            mPlayingItem.setVisible(false);
+        }
+    }
+
+    private void registerCallback(MusicService boundService) {
+        boundService.registerCallback(this);
+    }
+
+    private void unregisterCallback(MusicService boundService) {
+        boundService.unregisterCallback(this);
+    }
+
+    void doBindService() {
+        bindService(new Intent(this, MusicService.class), mConnection, Context.BIND_AUTO_CREATE);
+        mIsBound = true;
+    }
+
+    void doUnbindService() {
+        if (mIsBound) {
+            unbindService(mConnection);
+            mIsBound = false;
+        }
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mBoundService = ((MusicService.MusicBinder)service).getService();
+            registerCallback(mBoundService);
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            unregisterCallback(mBoundService);
+            mBoundService = null;
+        }
+    };
 }

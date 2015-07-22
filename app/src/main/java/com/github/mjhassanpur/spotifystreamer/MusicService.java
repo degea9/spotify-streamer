@@ -47,7 +47,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kaaes.spotify.webapi.android.models.Track;
 
@@ -84,7 +86,7 @@ public class MusicService extends Service implements Playback.Callback {
     private int mCurrentIndexOnQueue = -1;
     private MediaPlayback mPlayback;
     private List<Track> mTracks;
-    private Callback mCallback;
+    private Map<Integer, Callback> mCallbacks;
 
     private MediaNotificationManager mMediaNotificationManager;
 
@@ -141,6 +143,8 @@ public class MusicService extends Service implements Playback.Callback {
         if (PreferenceHelper.isNotificationsEnabled(this)) {
             mMediaNotificationManager = new MediaNotificationManager(this);
         }
+
+        mCallbacks = new HashMap<>();
     }
 
     @Override
@@ -272,8 +276,7 @@ public class MusicService extends Service implements Playback.Callback {
             if (mPlayingQueue != null && mCurrentIndexOnQueue >= mPlayingQueue.size()) {
                 mCurrentIndexOnQueue = 0;
             }
-            if (mCallback != null)
-                mCallback.onTrackChange(mCurrentIndexOnQueue);
+            notifyTrackChanged();
             if (QueueHelper.isIndexPlayable(mCurrentIndexOnQueue, mPlayingQueue)) {
                 handlePlayRequest();
             } else {
@@ -291,8 +294,7 @@ public class MusicService extends Service implements Playback.Callback {
             if (mPlayingQueue != null && mCurrentIndexOnQueue < 0) {
                 mCurrentIndexOnQueue = 0;
             }
-            if (mCallback != null)
-                mCallback.onTrackChange(mCurrentIndexOnQueue);
+            notifyTrackChanged();
             if (QueueHelper.isIndexPlayable(mCurrentIndexOnQueue, mPlayingQueue)) {
                 handlePlayRequest();
             } else {
@@ -313,6 +315,7 @@ public class MusicService extends Service implements Playback.Callback {
             // The service needs to keep running until we no longer need to play media.
             startService(new Intent(getApplicationContext(), MusicService.class));
             mServiceStarted = true;
+            notifyServiceStateChanged();
         }
 
         if (QueueHelper.isIndexPlayable(mCurrentIndexOnQueue, mPlayingQueue)) {
@@ -346,6 +349,7 @@ public class MusicService extends Service implements Playback.Callback {
         // service is no longer necessary. Will be started again if needed.
         stopSelf();
         mServiceStarted = false;
+        notifyServiceStateChanged();
     }
 
     private void updateMetadata() {
@@ -435,8 +439,7 @@ public class MusicService extends Service implements Playback.Callback {
             if (mCurrentIndexOnQueue >= mPlayingQueue.size()) {
                 mCurrentIndexOnQueue = 0;
             }
-            if (mCallback != null)
-                mCallback.onTrackChange(mCurrentIndexOnQueue);
+            notifyTrackChanged();
             handlePlayRequest();
         } else {
             // If there is nothing to play, we stop and release the resources:
@@ -466,16 +469,31 @@ public class MusicService extends Service implements Playback.Callback {
         }
     }
 
+    private void notifyTrackChanged() {
+        for (Callback cb : mCallbacks.values()) {
+            cb.onTrackChange(mCurrentIndexOnQueue);
+        }
+    }
+
+    private void notifyServiceStateChanged() {
+        for (Callback cb : mCallbacks.values()) {
+            cb.onServiceStateChange(mServiceStarted);
+        }
+    }
+
     public interface Callback {
         void onTrackChange(int position);
+        void onServiceStateChange(boolean started);
     }
 
     public void registerCallback(Callback cb) {
-        mCallback = cb;
+        mCallbacks.put(cb.hashCode(), cb);
     }
 
-    public void unregisterCallback() {
-        mCallback = null;
+    public void unregisterCallback(Callback cb) {
+        if (mCallbacks.containsKey(cb.hashCode())) {
+            mCallbacks.remove(cb.hashCode());
+        }
     }
 
     public class MusicBinder extends Binder {
@@ -507,6 +525,7 @@ public class MusicService extends Service implements Playback.Callback {
                 LogHelper.d(TAG, "Stopping service with delay handler.");
                 service.stopSelf();
                 service.mServiceStarted = false;
+                service.notifyServiceStateChanged();
             }
         }
     }

@@ -139,9 +139,7 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
             mTrackList = mGson.fromJson(json, mTrackListType);
             mSelectedTrack = mTrackList.get(mTrackPosition);
         }
-        if (!getResources().getBoolean(R.bool.twoPane)) {
-            setHasOptionsMenu(true);
-        }
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -370,8 +368,17 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
         mTrackPosition = position;
     }
 
+    @Override
+    public void onServiceStateChange(boolean started) {
+
+    }
+
     private void registerCallback(MusicService boundService) {
         boundService.registerCallback(this);
+    }
+
+    private void unregisterCallback(MusicService boundService) {
+        boundService.unregisterCallback(this);
     }
 
     void doBindService() {
@@ -413,7 +420,7 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            mBoundService.unregisterCallback();
+            unregisterCallback(mBoundService);
             mBoundService = null;
         }
     };
