@@ -93,11 +93,32 @@ public class MusicService extends Service implements Playback.Callback {
     private boolean mServiceStarted;
     private DelayedStopHandler mDelayedStopHandler = new DelayedStopHandler(this);
 
+    private Handler mHandler = new Handler();
+    private Runnable mDelayedAction = null;
+
     private final IBinder mBinder = new MusicBinder();
 
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+    @Override
+    public void onRebind(Intent intent) {
+        mHandler.removeCallbacks(mDelayedAction);
+        super.onRebind(intent);
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        mDelayedAction = new Runnable() {
+            @Override
+            public void run() {
+                stopSelf();
+            }
+        };
+        mHandler.postDelayed(mDelayedAction, 1000);
+        return true;
     }
 
     @Override
@@ -467,6 +488,10 @@ public class MusicService extends Service implements Playback.Callback {
             mPlayingQueue = queue;
             updateMetadata();
         }
+    }
+
+    public boolean hasServiceStarted() {
+        return mServiceStarted;
     }
 
     private void notifyTrackChanged() {

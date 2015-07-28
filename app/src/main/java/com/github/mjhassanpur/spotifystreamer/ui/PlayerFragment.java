@@ -140,6 +140,7 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
             mSelectedTrack = mTrackList.get(mTrackPosition);
         }
         setHasOptionsMenu(true);
+        doBindService();
     }
 
     @Override
@@ -252,7 +253,6 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
     @Override
     public void onStart() {
         super.onStart();
-        doBindService();
     }
 
     @Override
@@ -260,12 +260,12 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
         super.onDestroy();
         stopSeekbarUpdate();
         mExecutorService.shutdown();
+        doUnbindService();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        doUnbindService();
         if (mMediaController != null) {
             mMediaController.unregisterCallback(mCallback);
         }
@@ -370,7 +370,9 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
 
     @Override
     public void onServiceStateChange(boolean started) {
-
+        if (!started) {
+            doUnbindService();
+        }
     }
 
     private void registerCallback(MusicService boundService) {

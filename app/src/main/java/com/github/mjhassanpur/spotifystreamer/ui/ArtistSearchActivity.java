@@ -69,6 +69,7 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         } else {
             mTwoPane = false;
         }
+        doBindService();
     }
 
     @Override
@@ -76,6 +77,9 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         getMenuInflater().inflate(R.menu.menu_artist_search, menu);
         mSearchItem = menu.findItem(R.id.action_search);
         mPlayingItem = menu.findItem(R.id.action_playing);
+        if (mBoundService != null && mBoundService.hasServiceStarted()) {
+            mPlayingItem.setVisible(true);
+        }
         setupSearchView();
         return true;
     }
@@ -105,12 +109,16 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
     @Override
     protected void onStart() {
         super.onStart();
-        doBindService();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         doUnbindService();
     }
 
@@ -268,15 +276,12 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
             mPlayingItem.setVisible(true);
         } else {
             mPlayingItem.setVisible(false);
+            doUnbindService();
         }
     }
 
     private void registerCallback(MusicService boundService) {
         boundService.registerCallback(this);
-    }
-
-    private void unregisterCallback(MusicService boundService) {
-        boundService.unregisterCallback(this);
     }
 
     void doBindService() {
@@ -299,7 +304,6 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            unregisterCallback(mBoundService);
             mBoundService = null;
         }
     };
