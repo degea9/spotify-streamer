@@ -61,6 +61,34 @@
         android:progressDrawable="@drawable/apptheme_scrubber_progress_horizontal_holo_light"
         android:thumb="@drawable/apptheme_scrubber_control_selector_holo_light" />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="0:00"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/abc_text_size_small_material"
+            android:id="@+id/elapsed_time"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="0:30"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/abc_text_size_small_material"
+            android:id="@+id/track_duration"/>
+
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

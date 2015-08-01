@@ -77,7 +77,7 @@ public class MusicService extends Service implements Playback.Callback {
     public static final String CMD_PLAY = "CMD_PLAY";
 
     // Delay stopSelf by using a handler.
-    private static final int STOP_DELAY = 30000;
+    private static final int STOP_DELAY = 500000;
 
     private MediaProvider mMediaProvider;
     private MediaSessionCompat mSession;

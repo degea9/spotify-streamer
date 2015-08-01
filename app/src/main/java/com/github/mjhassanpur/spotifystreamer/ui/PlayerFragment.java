@@ -75,6 +75,7 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
     private ImageView mSkipPrev;
     private ImageView mPlayPause;
     private ImageView mSkipNext;
+    private TextView mElapsedTime;
 
     private MediaControllerCompat mMediaController;
 
@@ -154,6 +155,7 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
         mSkipPrev = (ImageView) rootView.findViewById(R.id.prev);
         mPlayPause = (ImageView) rootView.findViewById(R.id.play_pause);
         mSkipNext = (ImageView) rootView.findViewById(R.id.next);
+        mElapsedTime = (TextView) rootView.findViewById(R.id.elapsed_time);
 
         mSkipPrev.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,6 +255,7 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
     @Override
     public void onStart() {
         super.onStart();
+
     }
 
     @Override
@@ -261,14 +264,14 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
         stopSeekbarUpdate();
         mExecutorService.shutdown();
         doUnbindService();
+        if (mMediaController != null) {
+            mMediaController.unregisterCallback(mCallback);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mMediaController != null) {
-            mMediaController.unregisterCallback(mCallback);
-        }
     }
 
     private void scheduleSeekbarUpdate() {
@@ -361,6 +364,12 @@ public class PlayerFragment extends DialogFragment implements MusicService.Callb
             currentPosition += (int) timeDelta * mLastPlaybackState.getPlaybackSpeed();
         }
         mSeekbar.setProgress((int) currentPosition);
+        int seconds = ((int) currentPosition) / 1000;
+        if (seconds < 10) {
+            mElapsedTime.setText("0:0" + seconds);
+        } else {
+            mElapsedTime.setText("0:" + seconds);
+        }
     }
 
     @Override
