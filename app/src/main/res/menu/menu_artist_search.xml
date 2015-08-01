@@ -8,7 +8,7 @@
         android:id="@+id/action_search"
         android:title="@string/action_search"
         android:icon="@drawable/ic_search_white_24dp"
-        app:showAsAction="always|collapseActionView"
+        app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
@@ -16,4 +16,11 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+
+    <item android:id="@+id/action_playing"
+        android:title="Now playing"
+        android:icon="@drawable/ic_headset_white_24dp"
+        android:orderInCategory="99"
+        android:visible="false"
+        app:showAsAction="always"/>
 </menu>

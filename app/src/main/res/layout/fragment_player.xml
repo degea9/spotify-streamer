@@ -4,32 +4,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.github.mjhassanpur.spotifystreamer.fragments.PlayerFragment">
+    android:background="@drawable/primary_dark_color_background"
+    tools:context="com.github.mjhassanpur.spotifystreamer.ui.PlayerFragment">
 
-    <ImageView
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/abc_text_size_medium_material"
+        android:id="@+id/artist_name"/>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_gravity="center"
-        android:id="@+id/album_image"/>
+        android:layout_gravity="center">
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerInParent="true"
+            android:id="@+id/album_image"/>
+
+    </RelativeLayout>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:paddingBottom="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/abc_text_size_medium_material"
         android:id="@+id/track_name"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/abc_text_size_small_material"
         android:id="@+id/album_name"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:id="@+id/artist_name"/>
 
     <SeekBar
         android:id="@+id/seekBar"
@@ -37,32 +53,74 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp" />
+        android:layout_marginRight="5dp"
+        android:paddingTop="10dp"
+        android:progressDrawable="@drawable/apptheme_scrubber_progress_horizontal_holo_light"
+        android:thumb="@drawable/apptheme_scrubber_control_selector_holo_light" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="0:00"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/abc_text_size_small_material"
+            android:id="@+id/elapsed_time"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="0:30"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/abc_text_size_small_material"
+            android:id="@+id/track_duration"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/prev"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_previous"/>
+            android:paddingTop="20dp"
+            android:src="@drawable/ic_skip_previous_white_36dp"/>
 
-        <ImageView
-            android:id="@+id/play_pause"
+        <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:src="@android:drawable/ic_media_pause"/>
+            android:gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/play_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_pause_primary_dark_48dp"/>
+
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/next"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_next"/>
+            android:paddingTop="20dp"
+            android:src="@drawable/ic_skip_next_white_36dp"/>
 
     </LinearLayout>
 
