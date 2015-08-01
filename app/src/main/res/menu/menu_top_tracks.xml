@@ -12,7 +12,7 @@
 
     <item android:id="@+id/action_playing"
         android:title="Now playing"
-        android:icon="@drawable/ic_play_arrow_white_24dp"
+        android:icon="@drawable/ic_headset_white_24dp"
         android:orderInCategory="99"
         android:visible="false"
         app:showAsAction="always"/>

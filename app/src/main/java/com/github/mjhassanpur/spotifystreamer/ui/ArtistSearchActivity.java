@@ -90,6 +90,12 @@ public class ArtistSearchActivity extends AppCompatActivity implements ArtistSea
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
+        } else if (item.getItemId() == R.id.action_playing) {
+            Gson gson = new Gson();
+            Intent intent = new Intent(this, PlayerActivity.class);
+            intent.putExtra(KEY_TRACKS, gson.toJson(mTracks, mTrackListType));
+            intent.putExtra(KEY_SELECTED_TRACK, mTrackPosition);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
