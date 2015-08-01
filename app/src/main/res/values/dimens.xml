@@ -3,6 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="activity_dialog_height">600dp</dimen>
+    <dimen name="activity_dialog_width">600dp</dimen>
+
     <dimen name="default_search_message_image_size">128dp</dimen>
 
     <dimen name="list_item_image_size">50dp</dimen>
